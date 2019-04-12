@@ -16,4 +16,7 @@ def create_app(config_name='dev'):
     from berater.chat import chat
     app.register_blueprint(chat)
 
+    from berater.api import api
+    app.register_blueprint(api)
+
     return app
