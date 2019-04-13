@@ -2,6 +2,10 @@
 # created by inhzus
 
 
+# noinspection PyUnresolvedReferences
+from .secret import (API_KEY, API_SECRET)
+
+
 class BaseConfig(object):
     PROJECT = 'Berater'
 
