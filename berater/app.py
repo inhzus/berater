@@ -19,4 +19,7 @@ def create_app(config_name='dev'):
     from berater.api import api
     app.register_blueprint(api)
 
+    from berater.exception import error
+    app.register_blueprint(error)
+
     return app
