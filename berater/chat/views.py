@@ -2,13 +2,20 @@
 # created by inhzus
 
 import hashlib
-from xml.etree import ElementTree
 from time import time
+from xml.etree import ElementTree
 
 from flask import Blueprint, request, make_response, current_app
+
+from berater.misc import Response
 from berater.utils.wechat_sdk import MsgFormat
 
 chat = Blueprint('chat', __name__, url_prefix='/chat')
+
+
+@chat.route('/test')
+def test_route():
+    return Response({})
 
 
 @chat.route('/', methods=['GET', 'POST'])

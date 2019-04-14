@@ -19,4 +19,4 @@ error = Blueprint('errors', __name__)
 
 @error.app_errorhandler(BeraterException)
 def handle_exceptions(err):
-    return jsonify(code=EXCEPTION_STATUS_DICT[err.__class__], message=str(err))
+    return jsonify(code=EXCEPTION_STATUS_DICT[err.__class__], error=str(err))
