@@ -6,6 +6,8 @@ Wechat Service Back-End of Nanjing University Undergraduate Admissions
 
 ### Commit Type
 
+- \[Build\]: Changes that affect the build system or external dependencies
+
 - \[Feat\]: A new feature
 
 - \[Docs\]: Documentation only changes
