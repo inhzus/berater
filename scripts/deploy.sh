@@ -6,7 +6,6 @@ rm req.txt
 ssh suun@weixinbak.njunova.com "
 cd ~/berater;
 source env/bin/activate;
-git checkout -- .;
 git pull;
 pip3 install -r berater/req.txt;
 rm berater/req.txt;
