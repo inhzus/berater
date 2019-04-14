@@ -5,7 +5,7 @@ import hashlib
 from xml.etree import ElementTree
 from time import time
 
-from flask import Blueprint, request, make_response
+from flask import Blueprint, request, make_response, current_app
 from berater.utils.wechat_sdk import MsgFormat
 
 chat = Blueprint('chat', __name__, url_prefix='/chat')
@@ -13,6 +13,8 @@ chat = Blueprint('chat', __name__, url_prefix='/chat')
 
 @chat.route('/')
 def wechat_msg():
+    if 'echostr' in request.args:
+        return request.args['echostr']
     data = request.data
     if data:
         msg = {}
@@ -27,7 +29,7 @@ def wechat_msg():
 
 
 def verification() -> bool:
-    token = ''
+    token = current_app.config['WECHAT_TOKEN']
     args = request.args
     signature = args.get('signature', '')
     timestamp = args.get('timestamp', '')

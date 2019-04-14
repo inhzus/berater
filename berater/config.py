@@ -8,7 +8,7 @@ from .secret import (API_KEY, API_SECRET)
 
 class BaseConfig(object):
     PROJECT = 'Berater'
-
+    WECHAT_TOKEN = 'bkzs'
     @staticmethod
     def init_app(app):
         pass
