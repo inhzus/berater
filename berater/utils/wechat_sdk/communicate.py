@@ -11,10 +11,10 @@ class Communicate(object):
     此类只为与API 交互时能更方便地获得其json()
     """
     @staticmethod
-    def get(url, **kwargs):
+    def get(url: str, **kwargs) -> dict:
         ret = requests.get(url, **kwargs)
         return ret.json()
 
     @staticmethod
-    def post(url, data=None, **kwargs):
+    def post(url: str, data=None, **kwargs) -> dict:
         return requests.post(url, data, **kwargs).json()
