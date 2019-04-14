@@ -33,13 +33,13 @@ config = {
 }
 
 MENU = {
-    'button': {
+    'button': [
         {
             'type': 'view',
             'name': '测试按钮',
-            'url': Url.oauth2_auth_token.format(
+            'url': Url.oauth2_new_page.format(
                 appid=API_KEY,
                 redirect_url='{}/chat/test'.format(DevelopmentConfig.SERVER_URL))
         }
-    }
+    ]
 }

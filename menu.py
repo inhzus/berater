@@ -10,7 +10,8 @@ def create_menu():
     token = AccessToken.get(API_KEY, API_SECRET)
     if token:
         url = Url.create_menu.format(access_token=token)
-        return 'errcode' in Communicate.post(url, data=json.dumps(MENU, ensure_ascii=False).encode('utf-8'))
+        data = json.dumps(MENU, ensure_ascii=False).encode('utf-8')
+        return 'errcode' in Communicate.post(url, data=data)
     return False
 
 
