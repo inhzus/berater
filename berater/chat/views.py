@@ -15,7 +15,7 @@ chat = Blueprint('chat', __name__, url_prefix='/chat')
 
 @chat.route('/test')
 def test_route():
-    return Response({})
+    return Response({}).json()
 
 
 @chat.route('/', methods=['GET', 'POST'])
