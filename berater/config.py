@@ -19,6 +19,7 @@ class BaseConfig(object):
 class DevelopmentConfig(BaseConfig):
     DEBUG = True
     SERVER_URL = 'http://weixinbak.njunova.com'
+    LOCAL_URL = 'http://localhost:5000'
     # noinspection SpellCheckingInspection
     CRYPTO_KEY = b'ha0jkDDbnn9PT0UKCz1eCZjhVvCVwYWpaG5x2T_P1xo='
 

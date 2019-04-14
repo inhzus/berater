@@ -5,6 +5,7 @@ import hashlib
 from time import time
 from xml.etree import ElementTree
 
+import requests as rq
 from flask import Blueprint, request, make_response, current_app
 
 from berater.misc import Response
@@ -15,7 +16,13 @@ chat = Blueprint('chat', __name__, url_prefix='/chat')
 
 @chat.route('/test')
 def test_route():
-    return Response({}).json()
+    data = {'code': request.args.get('code', '')}
+    resp = rq.post('{}/api/token'.format(
+        current_app.config['LOCAL_URL']),
+        json=data
+    ).json()
+
+    return Response(**resp).json()
 
 
 @chat.route('/', methods=['GET', 'POST'])
