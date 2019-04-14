@@ -11,7 +11,7 @@ from berater.utils.wechat_sdk import MsgFormat
 chat = Blueprint('chat', __name__, url_prefix='/chat')
 
 
-@chat.route('/')
+@chat.route('/', methods=['GET', 'POST'])
 def wechat_msg():
     if 'echostr' in request.args:
         return request.args['echostr']
@@ -21,7 +21,7 @@ def wechat_msg():
         for item in ElementTree.fromstring(data):
             msg[item.tag] = item.text
         if verification():
-            reply = MsgFormat.text % (msg['FromUserName'], msg['ToUserName'], str(time()), '')
+            reply = MsgFormat.text % (msg['FromUserName'], msg['ToUserName'], str(time()), 'Developing')
             response = make_response(reply)
             response.content_type = 'application/xml'
             return response
