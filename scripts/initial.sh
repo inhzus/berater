@@ -9,7 +9,7 @@ git clone https://github.com/inhzus/berater;
 cd berater;
 mv ~/secret.py berater/;
 sudo apt-get install virtualenv;
-virtualenv env -p python3.7;
+virtualenv env -p python3;
 source env/bin/activate;
 pip3 install -r ~/req.txt;
 rm ~/req.txt;
