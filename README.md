@@ -24,10 +24,10 @@ Wechat Service Back-End of Nanjing University Undergraduate Admissions
 
 ### TODO
 
-- 返回多个问答对的咨询 API
+- [ ] 返回多个问答对的咨询 API
 
-- Flask-JWT 与其 API
+- [x] Flask-JWT 与其 API
 
-- 数据库搭建
+- [ ] 数据库搭建
 
-- 验证码 API
+- [ ] 验证码 API
