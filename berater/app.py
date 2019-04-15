@@ -13,6 +13,7 @@ def create_app(config_name='dev'):
     # configure app
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)
+    config[0] = config[config_name]
 
     crypto = Crypto(app)
     crypto.init_app(app)

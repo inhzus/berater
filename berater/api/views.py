@@ -3,7 +3,6 @@
 
 from flask import Blueprint, request, current_app
 import requests as rq
-from berater.config import EXPRESS_APP_CODE
 
 from berater.exception import UnauthorizedException, BadRequestException, InternalServerException
 from berater.misc import Response
@@ -24,7 +23,7 @@ def ems_logistics():
     no = request.args.get('no', '')
     if no:
         header = {
-            'Authorization': 'APPCODE {}'.format(EXPRESS_APP_CODE)
+            'Authorization': 'APPCODE {}'.format(current_app.config['EXPRESS_APP_CODE'])
         }
         resp = rq.get(current_app.config['EXPRESS_API_URL'], params={'no': no}, headers=header).json()
         if resp.get('msg', '') == 'ok':

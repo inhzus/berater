@@ -3,14 +3,15 @@
 
 
 from berater.utils.wechat_sdk import Url
-# noinspection PyUnresolvedReferences
-from .secret import (API_KEY, API_SECRET, EXPRESS_APP_CODE)
 
 
 class BaseConfig(object):
+    config_name = ''
     PROJECT = 'Berater'
     WECHAT_TOKEN = 'bkzs'
     EXPRESS_API_URL = 'http://kdwlcxf.market.alicloudapi.com/kdwlcx'
+    # noinspection PyUnresolvedReferences
+    from .secret import (API_KEY, API_SECRET, EXPRESS_APP_CODE)
 
     @staticmethod
     def init_app(app):
@@ -31,7 +32,8 @@ class ProductionConfig(BaseConfig):
 
 config = {
     'dev': DevelopmentConfig,
-    'pro': ProductionConfig
+    'pro': ProductionConfig,
+    0: DevelopmentConfig
 }
 
 MENU = {
@@ -40,7 +42,7 @@ MENU = {
             'type': 'view',
             'name': '测试按钮',
             'url': Url.oauth2_new_page.format(
-                appid=API_KEY,
+                appid=config[0].API_KEY,
                 redirect_url='{}/chat/test'.format(DevelopmentConfig.SERVER_URL))
         }
     ]
