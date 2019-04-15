@@ -54,6 +54,7 @@ def _token_required():
 
 
 def token_required(func):
+    @wraps(func)
     def decorator(*args, **kwargs):
         _token_required()
         return func(*args, **kwargs)
