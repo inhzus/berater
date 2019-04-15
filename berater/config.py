@@ -6,12 +6,18 @@ from berater.utils.wechat_sdk import Url
 
 
 class BaseConfig(object):
-    config_name = ''
     PROJECT = 'Berater'
     WECHAT_TOKEN = 'bkzs'
+
+    # Ali express API
     EXPRESS_API_URL = 'http://kdwlcxf.market.alicloudapi.com/kdwlcx'
+
+    # Ali short message service
+    SMS_SIGN_NAME = '南大咨询'
+    SMS_TEMPLATE_CODE = 'SMS_163433313'
+
     # noinspection PyUnresolvedReferences
-    from .secret import (API_KEY, API_SECRET, EXPRESS_APP_CODE)
+    from .secret import (API_KEY, API_SECRET, EXPRESS_APP_CODE, SMS_ACCESS_KEY, SMS_ACCESS_SECRET)
 
     @staticmethod
     def init_app(app):

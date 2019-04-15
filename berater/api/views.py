@@ -7,7 +7,7 @@ import requests as rq
 from berater.exception import UnauthorizedException, BadRequestException, InternalServerException
 from berater.misc import Response
 from berater.utils import token_required, get_crypto_token, current_identity
-from .wechat import get_openid_by_code
+from .utils import get_openid_by_code
 
 api = Blueprint('api', __name__, url_prefix='/api')
 
