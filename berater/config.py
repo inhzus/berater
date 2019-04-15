@@ -4,12 +4,13 @@
 
 from berater.utils.wechat_sdk import Url
 # noinspection PyUnresolvedReferences
-from .secret import (API_KEY, API_SECRET)
+from .secret import (API_KEY, API_SECRET, EXPRESS_APP_CODE)
 
 
 class BaseConfig(object):
     PROJECT = 'Berater'
     WECHAT_TOKEN = 'bkzs'
+    EXPRESS_API_URL = 'http://kdwlcxf.market.alicloudapi.com/kdwlcx'
 
     @staticmethod
     def init_app(app):

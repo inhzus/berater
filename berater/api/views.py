@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 # created by inhzus
 
-from flask import Blueprint, request
+from flask import Blueprint, request, current_app
+import requests as rq
+from berater.config import EXPRESS_APP_CODE
 
-from berater.exception import UnauthorizedException
+from berater.exception import UnauthorizedException, BadRequestException, InternalServerException
 from berater.misc import Response
 from berater.utils import token_required, get_crypto_token, current_identity
 from .wechat import get_openid_by_code
@@ -17,8 +19,18 @@ def update_info():
 
 
 @api.route('/ems')
+@token_required
 def ems_logistics():
-    pass
+    no = request.args.get('no', '')
+    if no:
+        header = {
+            'Authorization': 'APPCODE {}'.format(EXPRESS_APP_CODE)
+        }
+        resp = rq.get(current_app.config['EXPRESS_API_URL'], params={'no': no}, headers=header).json()
+        if resp.get('msg', '') == 'ok':
+            return Response(**resp.get('result')).json()
+        raise InternalServerException('Get express info failed')
+    raise BadRequestException('Request args \"no\" missing')
 
 
 @api.route('/token', methods=['POST'])
