@@ -6,10 +6,14 @@ import requests as rq
 
 from berater.exception import UnauthorizedException, BadRequestException, InternalServerException
 from berater.misc import Response
-from berater.utils import token_required, get_crypto_token, current_identity
-from .utils import get_openid_by_code
+from berater.utils import token_required, get_crypto_token, current_identity, MemoryCache
+from .utils import get_openid_by_code, send_verify_code
+import random
+
 
 api = Blueprint('api', __name__, url_prefix='/api')
+
+code_cache = MemoryCache(5 * 60)
 
 
 @api.route('/info')
@@ -44,3 +48,29 @@ def get_token():
 @token_required
 def refresh_token():
     return get_crypto_token(current_identity)
+
+
+# Test API: get token
+@api.route('/token', methods=['GET'])
+def test_token():
+    return get_crypto_token('test')
+
+
+@api.route('/code', methods=['POST'])
+@token_required
+def send_code():
+    # phone = request.json.get('phone', '')
+    # if phone:
+    #     gen_code = random.randrange(1000, 9999)
+    #     if send_verify_code(phone, gen_code):
+    #
+    #     code_cache.set(current_identity, v='test')
+    code_cache.set(current_identity, v='test')
+    return Response(**code_cache.get(current_identity)).json()
+
+
+@api.route('/code', methods=['GET'])
+@token_required
+def get_code():
+    code_cache.put(current_identity, v='test2', p='test3')
+    return Response(**code_cache.get(current_identity)).json()
