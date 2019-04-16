@@ -5,6 +5,7 @@ from flask import Flask
 
 from berater.config import config
 from berater.utils import Crypto
+from berater.misc import engine
 
 
 def create_app(config_name='dev'):
@@ -17,6 +18,8 @@ def create_app(config_name='dev'):
 
     crypto = Crypto(app)
     crypto.init_app(app)
+
+    engine.init_app(app)
 
     from berater.chat import chat
     app.register_blueprint(chat)

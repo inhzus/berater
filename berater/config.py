@@ -16,6 +16,11 @@ class BaseConfig(object):
     SMS_SIGN_NAME = '南大咨询'
     SMS_TEMPLATE_CODE = 'SMS_163433313'
 
+    # Flask SQLAlchemy
+    SQLALCHEMY_DATABASE_URI = 'mysql://root:root@localhost/berater'
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_POOL_SIZE = 5
+
     # noinspection PyUnresolvedReferences
     from .secret import (API_KEY, API_SECRET, EXPRESS_APP_CODE, SMS_ACCESS_KEY, SMS_ACCESS_SECRET)
 
@@ -30,6 +35,9 @@ class DevelopmentConfig(BaseConfig):
     LOCAL_URL = 'http://localhost:5000'
     # noinspection SpellCheckingInspection
     CRYPTO_KEY = b'ha0jkDDbnn9PT0UKCz1eCZjhVvCVwYWpaG5x2T_P1xo='
+
+    # Flask SQLAlchemy
+    SQLALCHEMY_ECHO = True
 
 
 class ProductionConfig(BaseConfig):
