@@ -9,7 +9,7 @@ from berater.utils import wechat_sdk, AliSMS
 _sms = AliSMS(config[0].SMS_ACCESS_KEY, config[0].SMS_ACCESS_SECRET, config[0].SMS_SIGN_NAME)
 
 
-def send_verify_code(phone_number, verify_code) -> bool:
+def send_verify_code(phone_number: str, verify_code: str) -> bool:
     params = {
         'code': verify_code
     }
@@ -17,5 +17,5 @@ def send_verify_code(phone_number, verify_code) -> bool:
     return 'Code' in ret and ret['Code'] == 'OK'
 
 
-def get_openid_by_code(code: str):
+def get_openid_by_code(code: str) -> str:
     return wechat_sdk.get_openid_from_code(code, config[0].API_KEY, config[0].API_SECRET)

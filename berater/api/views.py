@@ -25,15 +25,13 @@ def update_info():
 @token_required
 def ems_logistics():
     no = request.args.get('no', '')
-    if no:
-        header = {
-            'Authorization': 'APPCODE {}'.format(current_app.config['EXPRESS_APP_CODE'])
-        }
-        resp = rq.get(current_app.config['EXPRESS_API_URL'], params={'no': no}, headers=header).json()
-        if resp.get('msg', '') == 'ok':
-            return Response(**resp.get('result')).json()
+    if not no:
+        raise BadRequestException('Request args \"no\" missing')
+    header = {'Authorization': 'APPCODE {}'.format(current_app.config['EXPRESS_APP_CODE'])}
+    resp = rq.get(current_app.config['EXPRESS_API_URL'], params={'no': no}, headers=header).json()
+    if resp.get('msg', '') != 'ok':
         raise InternalServerException('Get express info failed')
-    raise BadRequestException('Request args \"no\" missing')
+    return Response(**resp.get('result')).json()
 
 
 @api.route('/token', methods=['POST'])
