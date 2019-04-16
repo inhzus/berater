@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 # created by inhzus
 
-from flask import Blueprint, request, current_app
-import requests as rq
+import random
 
-from berater.exception import UnauthorizedException, BadRequestException, InternalServerException
+import requests as rq
+from flask import Blueprint, request, current_app
+
+from berater.exception import UnauthorizedException, BadRequestException, InternalServerException, NotFoundException
 from berater.misc import Response
 from berater.utils import token_required, get_crypto_token, current_identity, MemoryCache
 from .utils import get_openid_by_code, send_verify_code
-import random
-
 
 api = Blueprint('api', __name__, url_prefix='/api')
 
@@ -59,18 +59,19 @@ def test_token():
 @api.route('/code', methods=['POST'])
 @token_required
 def send_code():
-    # phone = request.json.get('phone', '')
-    # if phone:
-    #     gen_code = random.randrange(1000, 9999)
-    #     if send_verify_code(phone, gen_code):
-    #
-    #     code_cache.set(current_identity, v='test')
-    code_cache.set(current_identity, v='test')
-    return Response(**code_cache.get(current_identity)).json()
+    phone = request.json.get('phone', '')
+    if not phone:
+        raise BadRequestException("Request arg \"phone\" missing")
+    gen_code = str(random.randrange(1000, 9999))
+    if not send_verify_code(phone, gen_code):
+        raise InternalServerException("Send verify code failed")
+    code_cache.set(current_identity, code=gen_code, phone=phone)
+    return Response().json()
 
 
-@api.route('/code', methods=['GET'])
+@api.route('/code/<input_code>', methods=['GET'])
 @token_required
-def get_code():
-    code_cache.put(current_identity, v='test2', p='test3')
-    return Response(**code_cache.get(current_identity)).json()
+def check_code(input_code):
+    if code_cache.get(current_identity)['code'] != input_code:
+        raise NotFoundException()
+    return Response().json()
