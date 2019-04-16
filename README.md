@@ -30,4 +30,6 @@ Wechat Service Back-End of Nanjing University Undergraduate Admissions
 
 - [ ] 数据库搭建
 
-- [ ] 验证码 API
+- [x] 验证码 API
+
+- [x] 快递查询 API
