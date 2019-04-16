@@ -46,7 +46,7 @@ MENU = {
     'button': [
         {
             'type': 'view',
-            'name': '测试按钮',
+            'name': '服务号相关功能正在开发',
             'url': Url.oauth2_new_page.format(
                 appid=config[0].API_KEY,
                 redirect_url='{}/chat/test'.format(DevelopmentConfig.SERVER_URL))
