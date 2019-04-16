@@ -17,7 +17,7 @@ class BaseConfig(object):
     SMS_TEMPLATE_CODE = 'SMS_163433313'
 
     # Flask SQLAlchemy
-    SQLALCHEMY_DATABASE_URI = 'mysql://root:root@localhost/berater'
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:root@localhost/berater'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_POOL_SIZE = 5
 

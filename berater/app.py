@@ -20,6 +20,7 @@ def create_app(config_name='dev'):
     crypto.init_app(app)
 
     engine.init_app(app)
+    engine.create_all(app=app)
 
     from berater.chat import chat
     app.register_blueprint(chat)
