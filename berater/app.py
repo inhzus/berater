@@ -23,10 +23,10 @@ def create_app(config_name='dev'):
     engine.create_all(app=app)
 
     from berater.chat import chat
-    app.register_blueprint(chat)
+    app.register_blueprint(chat, url_prefix='/chat')
 
     from berater.api import api
-    app.register_blueprint(api)
+    app.register_blueprint(api, url_prefix='/api')
 
     from berater.exception import error
     app.register_blueprint(error)

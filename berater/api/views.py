@@ -11,7 +11,7 @@ from berater.misc import Response
 from berater.utils import token_required, get_crypto_token, current_identity, MemoryCache
 from .utils import get_openid_by_code, send_verify_code
 
-api = Blueprint('api', __name__, url_prefix='/api')
+api = Blueprint('api', __name__)
 
 code_cache = MemoryCache(5 * 60)
 

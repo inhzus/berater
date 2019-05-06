@@ -11,7 +11,7 @@ from flask import Blueprint, request, make_response, current_app
 from berater.misc import Response
 from berater.utils.wechat_sdk import MsgFormat
 
-chat = Blueprint('chat', __name__, url_prefix='/chat')
+chat = Blueprint('chat', __name__)
 
 
 @chat.route('/test')
