@@ -32,3 +32,6 @@ class FaceStudentTable(engine.Model):
     origin = engine.Column(engine.String(10), index=True)
     gender = engine.Column(engine.String(2))
     department = engine.Column(engine.String(32), index=True)
+
+    def to_dict(self):
+        return dict(stuid=self.stuid, origin=self.origin, gender=self.gender, department=self.department)
