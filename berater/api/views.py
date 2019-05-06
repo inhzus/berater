@@ -16,11 +16,6 @@ api = Blueprint('api', __name__)
 code_cache = MemoryCache(5 * 60)
 
 
-@api.route('/info')
-def update_info():
-    pass
-
-
 @api.route('/ems')
 @token_required
 def ems_logistics():
@@ -45,11 +40,17 @@ def get_token():
 @api.route('/token', methods=['PATCH'])
 @token_required
 def refresh_token():
-    return get_crypto_token(current_identity)
+    return Response(token=get_crypto_token(current_identity)).json()
+
+
+@api.route('/token', methods=['GET'])
+@token_required
+def check_token():
+    return Response().json()
 
 
 # Test API: get token
-@api.route('/token', methods=['GET'])
+@api.route('/test/token', methods=['GET'])
 def test_token():
     return get_crypto_token('test')
 
@@ -73,3 +74,8 @@ def check_code(input_code):
     if code_cache.get(current_identity)['code'] != input_code:
         raise NotFoundException()
     return Response().json()
+
+
+@api.route('/info')
+def update_info():
+    pass
