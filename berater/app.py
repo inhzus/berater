@@ -25,6 +25,9 @@ def create_app(config_name='dev'):
     from berater.chat import chat
     app.register_blueprint(chat, url_prefix='/chat')
 
+    from berater.face import face
+    app.register_blueprint(face, url_prefix='/api/face')
+
     from berater.api import api
     app.register_blueprint(api, url_prefix='/api')
 

@@ -2,4 +2,4 @@
 # created by inhzus
 
 from .response import Response
-from .models import CandidateTable, StudentTable, engine
+from .models import engine, CandidateTable, StudentTable, FaceStudentTable

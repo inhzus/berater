@@ -23,3 +23,12 @@ class StudentTable(engine.Model):
     phone = engine.Column(engine.String(20), nullable=False)
     admission_id = engine.Column(engine.String(16))
     student_id = engine.Column(engine.String(12))
+
+
+class FaceStudentTable(engine.Model):
+    __tablename__ = 'face_student'
+    # __bind_key__ = 'local'
+    stuid = engine.Column(engine.String(12), primary_key=True)
+    origin = engine.Column(engine.String(10), index=True)
+    gender = engine.Column(engine.String(2))
+    department = engine.Column(engine.String(32), index=True)
