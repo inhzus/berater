@@ -7,7 +7,7 @@ import requests as rq
 from flask import Blueprint, request, current_app
 
 from berater.exception import UnauthorizedException, BadRequestException, InternalServerException, NotFoundException
-from berater.misc import Response
+from berater.misc import Response, CandidateTable, engine
 from berater.utils import token_required, get_crypto_token, current_identity, MemoryCache
 from .utils import get_openid_by_code, send_verify_code
 
@@ -71,11 +71,27 @@ def send_code():
 @api.route('/code/<input_code>', methods=['GET'])
 @token_required
 def check_code(input_code):
-    if code_cache.get(current_identity)['code'] != input_code:
+    cached = code_cache.get(current_identity, {})
+    if cached.get('code', '') != input_code:
         raise NotFoundException()
+    cached.pop('code', '')
+    cached.setdefault('status', True)
+    code_cache.refresh(current_identity)
     return Response().json()
 
 
-@api.route('/info')
-def update_info():
-    pass
+@api.route('/candidate', methods=['POST'])
+# @token_required
+def candidate_signup():
+    cached = code_cache.get(current_identity, {})
+    if not cached.get('status', False):
+        raise UnauthorizedException('Phone not verified')
+    param_keys = ['name', 'province', 'city', 'score']
+    params = {k: request.json.get(k) for k in param_keys if k in request.json}
+    if len(params.keys()) != 4:
+        raise BadRequestException('Require params: {}, only get {}'.format(
+            ', '.join(param_keys), ', '.join(params.keys())))
+    candidate = CandidateTable(openid=current_identity, phone=cached.get('phone'), **params)
+    engine.session.add(candidate)
+    engine.session.commit()
+    return Response().json()
