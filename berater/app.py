@@ -3,6 +3,8 @@
 
 from flask import Flask
 
+from json import JSONEncoder
+
 from berater.config import config
 from berater.utils import Crypto
 from berater.misc import engine
@@ -21,6 +23,14 @@ def create_app(config_name='dev'):
 
     engine.init_app(app)
     engine.create_all(app=app)
+
+    # Json encoder set ensure ASCII false
+    class NonASCIIEncoder(JSONEncoder):
+        def __init__(self, **kwargs):
+            kwargs['ensure_ascii'] = False
+            super(NonASCIIEncoder, self).__init__(**kwargs)
+
+    app.json_encoder = NonASCIIEncoder
 
     from berater.chat import chat
     app.register_blueprint(chat, url_prefix='/chat')
