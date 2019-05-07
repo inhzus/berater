@@ -18,6 +18,9 @@ class BaseConfig(object):
 
     # Flask SQLAlchemy
     SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:root@localhost/berater'
+    SQLALCHEMY_BINDS = {
+        'local': SQLALCHEMY_DATABASE_URI
+    }
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_POOL_SIZE = 5
 
