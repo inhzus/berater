@@ -42,7 +42,7 @@ current_identity = LocalProxy(lambda: getattr(_request_ctx_stack.top, 'current_i
 
 
 def _token_required():
-    token = request.headers.get(current_app.config['CRYPTO_HEADER_KEY'], None)
+    token = request.headers.get(current_app.config['CRYPTO_HEADER_KEY'], None).split(' ')[1]
     if token is None:
         raise UnauthorizedException('Token not in request headers')
     try:
@@ -63,4 +63,4 @@ def token_required(func):
 
 
 def get_crypto_token(id_: str):
-    return _crypto.encrypt(id_)
+    return 'Bearer {}'.format(_crypto.encrypt(id_))
