@@ -13,7 +13,7 @@ from .utils import get_openid_by_code, send_verify_code
 
 api = Blueprint('api', __name__)
 
-code_cache = MemoryCache(5 * 60)
+code_cache = MemoryCache('code', 5 * 60)
 
 
 @api.route('/ems')
@@ -71,19 +71,18 @@ def send_code():
 @api.route('/code/<input_code>', methods=['GET'])
 @token_required
 def check_code(input_code):
-    cached = code_cache.get(current_identity, {})
+    cached = code_cache.get(current_identity)
     if cached.get('code', '') != input_code:
         raise NotFoundException()
-    cached.pop('code', '')
-    cached.setdefault('status', True)
-    code_cache.refresh(current_identity)
+    cached.setdefault('status', 1)
+    code_cache.set(current_identity, **cached)
     return Response().json()
 
 
 @api.route('/candidate', methods=['POST'])
-# @token_required
+@token_required
 def candidate_signup():
-    cached = code_cache.get(current_identity, {})
+    cached = code_cache.get(current_identity)
     if not cached.get('status', False):
         raise UnauthorizedException('Phone not verified')
     param_keys = ['name', 'province', 'city', 'score']

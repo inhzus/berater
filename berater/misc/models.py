@@ -2,8 +2,12 @@
 # created by inhzus
 
 from flask_sqlalchemy import SQLAlchemy
+from redis import Redis, ConnectionPool
 
 engine = SQLAlchemy()
+
+pool = ConnectionPool(decode_responses=True)
+redis_client = Redis(connection_pool=pool)
 
 
 class CandidateTable(engine.Model):
