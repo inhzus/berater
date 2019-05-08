@@ -7,7 +7,7 @@ import requests as rq
 from flask import Blueprint, request, current_app
 
 from berater.exception import UnauthorizedException, BadRequestException, InternalServerException, NotFoundException
-from berater.misc import Response, CandidateTable, engine
+from berater.misc import Response, CandidateTable, StudentTable, engine
 from berater.utils import token_required, get_crypto_token, current_identity, MemoryCache
 from .utils import get_openid_by_code, send_verify_code
 
@@ -92,5 +92,23 @@ def candidate_signup():
             ', '.join(param_keys), ', '.join(params.keys())))
     candidate = CandidateTable(openid=current_identity, phone=cached.get('phone'), **params)
     engine.session.add(candidate)
+    engine.session.commit()
+    return Response().json()
+
+
+@api.route('/student', methods=['POST'])
+@token_required
+def student_signup():
+    cached = code_cache.get(current_identity)
+    if not cached.get('status', False):
+        raise UnauthorizedException('Phone not verified')
+    expected = ['id_card', 'admission_id', 'student_id']
+    params = {k: request.json.get(k) for k in expected if k in request.json}
+    keys = params.keys()
+    if not (expected[0] in keys and (expected[1] in keys or expected[2] in keys)):
+        raise BadRequestException('Require params: {}, {} or {}, only get {}'
+                                  .format(*expected, ', '.join(keys)))
+    student = StudentTable(openid=current_identity, phone=cached.get('phone'), **params)
+    engine.session.add(student)
     engine.session.commit()
     return Response().json()
