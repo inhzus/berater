@@ -5,15 +5,15 @@ import random
 
 import requests as rq
 from flask import Blueprint, request, current_app
-from werkzeug.exceptions import BadRequest, Unauthorized, InternalServerError, NotFound
+from werkzeug.exceptions import BadRequest, Unauthorized, InternalServerError, NotFound, Conflict
 
-from berater.misc import Response, CandidateTable, StudentTable, engine
+from berater.misc import Response, CandidateTable, StudentTable, Transaction
 from berater.utils import token_required, get_crypto_token, current_identity, MemoryCache
 from .utils import get_openid_by_code, send_verify_code
 
 api = Blueprint('api', __name__)
 
-code_cache = MemoryCache('code', 5 * 60)
+code_cache = MemoryCache('code', 60 * 60)
 
 
 @api.route('/ems')
@@ -37,7 +37,7 @@ def get_token():
     return Response(token=get_crypto_token(openid)).json()
 
 
-@api.route('/token', methods=['PATCH'])
+@api.route('/token', methods=['PUT'])
 @token_required
 def refresh_token():
     return Response(token=get_crypto_token(current_identity)).json()
@@ -91,8 +91,27 @@ def candidate_signup():
         raise BadRequest('Require params: {}, only get {}'.format(
             ', '.join(param_keys), ', '.join(params.keys())))
     candidate = CandidateTable(openid=current_identity, phone=cached.get('phone'), **params)
-    engine.session.add(candidate)
-    engine.session.commit()
+    with Transaction() as session:
+        if session.query(CandidateTable).filter(CandidateTable.openid == current_identity).first():
+            raise Conflict('Candidate has been posted')
+        session.add(candidate)
+    return Response().json()
+
+
+@api.route('/candidate', methods=['PATCH'])
+@token_required
+def candidate_update():
+    expected = ['phone', 'name', 'province', 'city', 'score']
+    params = {k: request.json.get(k) for k in expected if k in request.json}
+    if 'phone' in params:
+        cached = code_cache.get(current_identity)
+        if not cached.get('status', False):
+            raise Unauthorized('Phone not verified')
+    with Transaction() as session:
+        query = session.query(CandidateTable).filter(CandidateTable.openid == current_identity)
+        if not query.first():
+            raise NotFound('Candidate not posted')
+        query.update(params)
     return Response().json()
 
 
@@ -107,8 +126,10 @@ def student_signup():
     keys = params.keys()
     if not (expected[0] in keys and (expected[1] in keys or expected[2] in keys)):
         raise BadRequest('Require params: {}, {} or {}, only get {}'
-                                  .format(*expected, ', '.join(keys)))
+                         .format(*expected, ', '.join(keys)))
     student = StudentTable(openid=current_identity, phone=cached.get('phone'), **params)
-    engine.session.add(student)
-    engine.session.commit()
+    with Transaction() as session:
+        if session.query(StudentTable).filter(StudentTable.openid == current_identity).first():
+            raise Conflict('Student has been posted')
+        session.add(student)
     return Response().json()

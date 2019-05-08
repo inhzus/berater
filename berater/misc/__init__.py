@@ -2,4 +2,4 @@
 # created by inhzus
 
 from .response import Response
-from .models import redis_client, engine, CandidateTable, StudentTable, FaceStudentTable
+from .models import redis_client, engine, Transaction, CandidateTable, StudentTable, FaceStudentTable

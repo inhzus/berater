@@ -6,6 +6,21 @@ from redis import Redis, ConnectionPool
 
 engine = SQLAlchemy()
 
+
+class Transaction:
+    """Flask SQLAlchemy Transaction https://gist.github.com/honzajavorek/1853867"""
+
+    def __init__(self):
+        pass
+
+    def __enter__(self):
+        return engine.session
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if not exc_val:
+            engine.session.commit()
+
+
 pool = ConnectionPool(decode_responses=True)
 redis_client = Redis(connection_pool=pool)
 
