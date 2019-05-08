@@ -5,8 +5,8 @@ import random
 
 import requests as rq
 from flask import Blueprint, request, current_app
+from werkzeug.exceptions import BadRequest, Unauthorized, InternalServerError, NotFound
 
-from berater.exception import UnauthorizedException, BadRequestException, InternalServerException, NotFoundException
 from berater.misc import Response, CandidateTable, StudentTable, engine
 from berater.utils import token_required, get_crypto_token, current_identity, MemoryCache
 from .utils import get_openid_by_code, send_verify_code
@@ -21,11 +21,11 @@ code_cache = MemoryCache('code', 5 * 60)
 def ems_logistics():
     no = request.args.get('no', '')
     if not no:
-        raise BadRequestException('Request args \"no\" missing')
+        raise BadRequest('Request args \"no\" missing')
     header = {'Authorization': 'APPCODE {}'.format(current_app.config['EXPRESS_APP_CODE'])}
     resp = rq.get(current_app.config['EXPRESS_API_URL'], params={'no': no}, headers=header).json()
     if resp.get('msg', '') != 'ok':
-        raise InternalServerException('Get express info failed')
+        raise InternalServerError('Get express info failed')
     return Response(**resp.get('result')).json()
 
 
@@ -33,7 +33,7 @@ def ems_logistics():
 def get_token():
     openid = get_openid_by_code(request.json.get('code', ''))
     if not openid:
-        raise UnauthorizedException('Code invalid')
+        raise Unauthorized('Code invalid')
     return Response(token=get_crypto_token(openid)).json()
 
 
@@ -60,10 +60,10 @@ def test_token():
 def send_code():
     phone = request.json.get('phone', '')
     if not phone:
-        raise BadRequestException("Request arg \"phone\" missing")
+        raise BadRequest("Request arg \"phone\" missing")
     gen_code = str(random.randrange(1000, 9999))
     if not send_verify_code(phone, gen_code):
-        raise InternalServerException("Send verify code failed")
+        raise InternalServerError("Send verify code failed")
     code_cache.set(current_identity, code=gen_code, phone=phone)
     return Response().json()
 
@@ -73,7 +73,7 @@ def send_code():
 def check_code(input_code):
     cached = code_cache.get(current_identity)
     if cached.get('code', '') != input_code:
-        raise NotFoundException()
+        raise NotFound()
     cached.setdefault('status', 1)
     code_cache.set(current_identity, **cached)
     return Response().json()
@@ -84,11 +84,11 @@ def check_code(input_code):
 def candidate_signup():
     cached = code_cache.get(current_identity)
     if not cached.get('status', False):
-        raise UnauthorizedException('Phone not verified')
+        raise Unauthorized('Phone not verified')
     param_keys = ['name', 'province', 'city', 'score']
     params = {k: request.json.get(k) for k in param_keys if k in request.json}
     if len(params.keys()) != 4:
-        raise BadRequestException('Require params: {}, only get {}'.format(
+        raise BadRequest('Require params: {}, only get {}'.format(
             ', '.join(param_keys), ', '.join(params.keys())))
     candidate = CandidateTable(openid=current_identity, phone=cached.get('phone'), **params)
     engine.session.add(candidate)
@@ -101,12 +101,12 @@ def candidate_signup():
 def student_signup():
     cached = code_cache.get(current_identity)
     if not cached.get('status', False):
-        raise UnauthorizedException('Phone not verified')
+        raise Unauthorized('Phone not verified')
     expected = ['id_card', 'admission_id', 'student_id']
     params = {k: request.json.get(k) for k in expected if k in request.json}
     keys = params.keys()
     if not (expected[0] in keys and (expected[1] in keys or expected[2] in keys)):
-        raise BadRequestException('Require params: {}, {} or {}, only get {}'
+        raise BadRequest('Require params: {}, {} or {}, only get {}'
                                   .format(*expected, ', '.join(keys)))
     student = StudentTable(openid=current_identity, phone=cached.get('phone'), **params)
     engine.session.add(student)

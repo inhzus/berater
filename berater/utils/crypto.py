@@ -6,9 +6,8 @@ from functools import wraps
 from cryptography.fernet import Fernet, InvalidToken
 # noinspection PyProtectedMember
 from flask import current_app, _request_ctx_stack, request
+from werkzeug.exceptions import Unauthorized
 from werkzeug.local import LocalProxy
-
-from berater.exception import UnauthorizedException
 
 CONFIG_DEFAULTS = {
     'CRYPTO_TTL': 60 * 60,
@@ -44,13 +43,13 @@ current_identity = LocalProxy(lambda: getattr(_request_ctx_stack.top, 'current_i
 def _token_required():
     token = request.headers.get(current_app.config['CRYPTO_HEADER_KEY'], None).split(' ')[1]
     if token is None:
-        raise UnauthorizedException('Token not in request headers')
+        raise Unauthorized('Token not in request headers')
     try:
         _request_ctx_stack.top.current_identity = identity = _crypto.decrypt(token).decode()
     except InvalidToken:
-        raise UnauthorizedException('Invalid Token')
+        raise Unauthorized('Invalid Token')
     if identity is None:
-        raise UnauthorizedException('Token in request headers empty')
+        raise Unauthorized('Token in request headers empty')
 
 
 def token_required(func):

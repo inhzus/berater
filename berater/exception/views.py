@@ -2,21 +2,11 @@
 # created by inhzus
 
 from flask import Blueprint, jsonify
-from .exceptions import *
-
-
-EXCEPTION_STATUS_DICT = {
-    BadRequestException: 400,
-    UnauthorizedException: 401,
-    ForbiddenException: 403,
-    NotFoundException: 404,
-    InternalServerException: 500
-}
-
+from werkzeug.exceptions import *
 
 error = Blueprint('errors', __name__)
 
 
-@error.app_errorhandler(BeraterException)
-def handle_exceptions(err):
-    return jsonify(code=EXCEPTION_STATUS_DICT[err.__class__], error=str(err), data=None)
+@error.app_errorhandler(HTTPException)
+def handle_http_exceptions(err: HTTPException):
+    return jsonify(code=err.code, error=err.description, data=None)
