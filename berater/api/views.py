@@ -103,14 +103,15 @@ def candidate_signup():
 def candidate_update():
     expected = ['phone', 'name', 'province', 'city', 'score']
     params = {k: request.json.get(k) for k in expected if k in request.json}
-    if 'phone' in params:
-        cached = code_cache.get(current_identity)
-        if not cached.get('status', False):
-            raise Unauthorized('Phone not verified')
     with Transaction() as session:
         query = session.query(CandidateTable).filter(CandidateTable.openid == current_identity)
-        if not query.first():
+        candidate: CandidateTable = query.first()
+        if not candidate:
             raise NotFound('Candidate not posted')
+        if candidate.phone != params.get('phone', candidate.phone):
+            cached = code_cache.get(current_identity)
+            if not cached.get('status', False):
+                raise Unauthorized('Phone not verified')
         query.update(params)
     return Response().json()
 
@@ -132,4 +133,22 @@ def student_signup():
         if session.query(StudentTable).filter(StudentTable.openid == current_identity).first():
             raise Conflict('Student has been posted')
         session.add(student)
+    return Response().json()
+
+
+@api.route('student', methods=['PATCH'])
+@token_required
+def student_update():
+    expected = ['phone', 'id_card', 'admission_id', 'student_id']
+    params = {k: request.json.get(k) for k in expected if k in request.json}
+    with Transaction() as session:
+        query = session.query(StudentTable).filter(StudentTable.openid == current_identity)
+        student: StudentTable = query.first()
+        if not student:
+            raise NotFound('Student not posted')
+        if student.phone != params.get('phone', student.phone):
+            cached = code_cache.get(current_identity)
+            if not cached.get('status', False):
+                raise Unauthorized('Phone not verified')
+        query.update(params)
     return Response().json()
