@@ -53,9 +53,8 @@ def check_token():
 
 
 # Test API: get token
-@api.route('/test/token', methods=['POST'])
-def test_token():
-    openid = 'test'
+@api.route('/test/token/<openid>', methods=['POST'])
+def test_token(openid):
     with Transaction() as session:
         is_candidate = True if session.query(CandidateTable).filter(CandidateTable.openid == openid).first() else False
         is_student = True if session.query(StudentTable).filter(StudentTable.openid == openid).first() else False
