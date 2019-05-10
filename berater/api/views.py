@@ -52,7 +52,7 @@ def check_token():
 # Test API: get token
 @api.route('/test/token', methods=['GET'])
 def test_token():
-    return get_crypto_token('test')
+    return Response(token=get_crypto_token('test')).json()
 
 
 @api.route('/code', methods=['POST'])
