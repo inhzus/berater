@@ -34,7 +34,10 @@ def get_token():
     openid = get_openid_by_code(request.json.get('code', ''))
     if not openid:
         raise Unauthorized('Code invalid')
-    return Response(token=get_crypto_token(openid)).json()
+    with Transaction() as session:
+        is_candidate = True if session.query(CandidateTable).filter(CandidateTable.openid == openid).first() else False
+        is_student = True if session.query(StudentTable).filter(StudentTable.openid == openid).first() else False
+    return Response(token=get_crypto_token(openid), candidate=is_candidate, student=is_student).json()
 
 
 @api.route('/token', methods=['PUT'])
@@ -52,7 +55,11 @@ def check_token():
 # Test API: get token
 @api.route('/test/token', methods=['POST'])
 def test_token():
-    return Response(token=get_crypto_token('test')).json()
+    openid = 'test'
+    with Transaction() as session:
+        is_candidate = True if session.query(CandidateTable).filter(CandidateTable.openid == openid).first() else False
+        is_student = True if session.query(StudentTable).filter(StudentTable.openid == openid).first() else False
+    return Response(token=get_crypto_token(openid), candidate=is_candidate, student=is_student).json()
 
 
 @api.route('/code', methods=['POST'])
