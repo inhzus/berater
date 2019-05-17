@@ -11,6 +11,8 @@ from flask import Blueprint, request, make_response, current_app
 from berater.misc import Response
 from berater.utils.wechat_sdk import MsgFormat
 
+from .bert import candidate_answer
+
 chat = Blueprint('chat', __name__)
 
 
@@ -35,7 +37,8 @@ def wechat_msg():
         for item in ElementTree.fromstring(data):
             msg[item.tag] = item.text
         if verification():
-            reply = MsgFormat.text % (msg['FromUserName'], msg['ToUserName'], str(time()), 'Developing')
+            answer = candidate_answer(msg['Content'])
+            reply = MsgFormat.text % (msg['FromUserName'], msg['ToUserName'], str(time()), answer)
             response = make_response(reply)
             response.content_type = 'application/xml'
             return response

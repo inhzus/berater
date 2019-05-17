@@ -1,4 +1,5 @@
 asn1crypto==0.24.0
+bert-serving-client==1.8.9
 certifi==2019.3.9
 cffi==1.12.3
 chardet==3.0.4
@@ -10,9 +11,11 @@ idna==2.8
 itsdangerous==1.1.0
 Jinja2==2.10.1
 MarkupSafe==1.1.1
+numpy==1.16.3
 pkg-resources==0.0.0
 pycparser==2.19
 PyMySQL==0.9.3
+pyzmq==18.0.1
 redis==3.2.1
 requests==2.21.0
 six==1.12.0
