@@ -8,7 +8,8 @@ from flask import Blueprint, request, current_app
 from werkzeug.exceptions import BadRequest, Unauthorized, InternalServerError, NotFound, Conflict
 
 from berater.misc import Response, CandidateTable, StudentTable, Transaction
-from berater.utils import token_required, get_crypto_token, current_identity, MemoryCache
+from berater.utils import (token_required, get_crypto_token, current_identity,
+                           MemoryCache, candidate_answer)
 from .utils import get_openid_by_code, send_verify_code
 
 api = Blueprint('api', __name__)
@@ -159,3 +160,19 @@ def student_update():
                 raise Unauthorized('Phone not verified')
         query.update(params)
     return Response().json()
+
+
+@api.route('/qna', methods=['GET'])
+@token_required
+def bert_qna():
+    q = request.args.get('q', '')
+    if not q:
+        raise BadRequest('Request arg "q" missing')
+    answer = candidate_answer(q)
+    # TODO
+    # filter = or_(*(QNA.q.like(a) for a in answer[0]))
+    # query = engine.session.query(QNA.q, QNA.a).filter(filter)
+    # qna = [{'q': row.q, 'a': row.a} for row in query.all()]
+    # q_list, a_list = map(qna, zip(*qna))
+    qna = [{'q': answer[0][i], 'a': answer[1][i]} for i in range(len(answer[0]))]
+    return Response(qna=qna).json()
