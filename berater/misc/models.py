@@ -33,6 +33,7 @@ class CandidateTable(engine.Model):
     province = engine.Column(engine.String(2), nullable=False)
     city = engine.Column(engine.String(10), nullable=False)
     score = engine.Column(engine.Float(precision=1), nullable=False)
+    subject = engine.Column(engine.String(10), nullable=False)
 
 
 class StudentTable(engine.Model):
