@@ -42,8 +42,6 @@ class StudentTable(engine.Model):
     openid = engine.Column(engine.String(30), primary_key=True)
     phone = engine.Column(engine.String(20), nullable=False)
     id_card = engine.Column(engine.String(18), nullable=False)
-    admission_id = engine.Column(engine.String(16))
-    student_id = engine.Column(engine.String(12))
 
 
 class FaceStudentTable(engine.Model):

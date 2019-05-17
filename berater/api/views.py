@@ -128,13 +128,14 @@ def student_signup():
     cached = code_cache.get(current_identity)
     if not cached.get('status', False):
         raise Unauthorized('Phone not verified')
-    expected = ['id_card', 'admission_id', 'student_id']
+    expected = ['id_card', 'id']
     params = {k: request.json.get(k) for k in expected if k in request.json}
     keys = params.keys()
-    if not (expected[0] in keys and (expected[1] in keys or expected[2] in keys)):
-        raise BadRequest('Require params: {}, {} or {}, only get {}'
-                         .format(*expected, ', '.join(keys)))
-    student = StudentTable(openid=current_identity, phone=cached.get('phone'), **params)
+    if len(keys) != len(expected):
+        raise BadRequest('Require params: {}, only get {}'
+                         .format(', '.join(expected), ', '.join(keys)))
+    # TODO Find row from public database where id_card equals and it matches id
+    student = StudentTable(openid=current_identity, phone=cached.get('phone'), id_card=params.get('id_card'))
     with Transaction() as session:
         if session.query(StudentTable).filter(StudentTable.openid == current_identity).first():
             raise Conflict('Student has been posted')
