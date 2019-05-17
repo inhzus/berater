@@ -93,7 +93,7 @@ def candidate_signup():
         raise Unauthorized('Phone not verified')
     param_keys = ['name', 'province', 'city', 'score', 'subject']
     params = {k: request.json.get(k) for k in param_keys if k in request.json}
-    if len(params.keys()) != 4:
+    if len(params.keys()) != len(param_keys):
         raise BadRequest('Require params: {}, only get {}'.format(
             ', '.join(param_keys), ', '.join(params.keys())))
     candidate = CandidateTable(openid=current_identity, phone=cached.get('phone'), **params)
