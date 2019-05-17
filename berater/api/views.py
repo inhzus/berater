@@ -91,7 +91,7 @@ def candidate_signup():
     cached = code_cache.get(current_identity)
     if not cached.get('status', False):
         raise Unauthorized('Phone not verified')
-    param_keys = ['name', 'province', 'city', 'score']
+    param_keys = ['name', 'province', 'city', 'score', 'subject']
     params = {k: request.json.get(k) for k in param_keys if k in request.json}
     if len(params.keys()) != 4:
         raise BadRequest('Require params: {}, only get {}'.format(
@@ -107,7 +107,7 @@ def candidate_signup():
 @api.route('/candidate', methods=['PATCH'])
 @token_required
 def candidate_update():
-    expected = ['phone', 'name', 'province', 'city', 'score']
+    expected = ['phone', 'name', 'province', 'city', 'score', 'subject']
     params = {k: request.json.get(k) for k in expected if k in request.json}
     with Transaction() as session:
         query = session.query(CandidateTable).filter(CandidateTable.openid == current_identity)
