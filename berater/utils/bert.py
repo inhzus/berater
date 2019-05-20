@@ -5,11 +5,13 @@ from typing import List
 
 from bert_serving.client import BertClient
 
-client = BertClient(ip='ali.zsuun.com', port=8002, port_out=8003)
-
 
 def candidate_answer(q: str) -> List[List]:
-    answer = client.encode([q])
+    try:
+        with BertClient(ip='ali.zsuun.com', port=8002, port_out=8003, timeout=3000) as client:
+            answer = client.encode([q])
+    except TimeoutError:
+        answer = None
     return answer
 
 

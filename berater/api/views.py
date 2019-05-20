@@ -169,6 +169,8 @@ def bert_qna():
     if not q:
         raise BadRequest('Request arg "q" missing')
     answer = candidate_answer(q)
+    if answer is None:
+        raise InternalServerError('Bert server error')
     # TODO
     # filter = or_(*(QNA.q.like(a) for a in answer[0]))
     # query = engine.session.query(QNA.q, QNA.a).filter(filter)
