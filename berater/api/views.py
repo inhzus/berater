@@ -67,10 +67,11 @@ def test_token(openid):
 def send_code():
     phone = request.json.get('phone', '')
     if not phone:
-        raise BadRequest("Request arg \"phone\" missing")
+        raise BadRequest('Request arg \"phone\" missing')
     gen_code = str(random.randrange(1000, 9999))
-    if not send_verify_code(phone, gen_code):
-        raise InternalServerError("Send verify code failed")
+    status, msg = send_verify_code(phone, gen_code)
+    if not status:
+        raise InternalServerError(msg)
     code_cache.set(current_identity, code=gen_code, phone=phone)
     return Response().json()
 
