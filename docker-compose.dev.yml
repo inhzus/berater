@@ -29,7 +29,7 @@ services:
     env_file:
       - .env
     ports:
-      - "127.0.0.1:5000:5000"
+      - "80:80"
     volumes:
       - "./conf/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf"
     links:
