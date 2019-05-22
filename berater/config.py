@@ -3,6 +3,7 @@
 
 
 from berater.utils.wechat_sdk import Url
+from os import getenv
 
 
 class BaseConfig(object):
@@ -17,7 +18,9 @@ class BaseConfig(object):
     SMS_TEMPLATE_CODE = 'SMS_163433313'
 
     # Flask SQLAlchemy
-    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:root@localhost/berater'
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://{}:{}@mysql/{}'.format(
+        getenv('MYSQL_USER', ''), getenv('MYSQL_PASSWORD', ''), getenv('MYSQL_DATABASE', ''))
+    # SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:root@mysql/berater'
     SQLALCHEMY_BINDS = {
         'local': SQLALCHEMY_DATABASE_URI
     }
@@ -25,7 +28,12 @@ class BaseConfig(object):
     SQLALCHEMY_POOL_SIZE = 5
 
     # noinspection PyUnresolvedReferences
-    from .secret import (API_KEY, API_SECRET, EXPRESS_APP_CODE, SMS_ACCESS_KEY, SMS_ACCESS_SECRET)
+    API_KEY = getenv('API_KEY', '')
+    API_SECRET = getenv('API_SECRET', '')
+    EXPRESS_APP_CODE = getenv('EXPRESS_APP_CODE', '')
+    SMS_ACCESS_KEY = getenv('SMS_ACCESS_KEY', '')
+    SMS_ACCESS_SECRET = getenv('SMS_ACCESS_SECRET', '')
+    # from .secret import (API_KEY, API_SECRET, EXPRESS_APP_CODE, SMS_ACCESS_KEY, SMS_ACCESS_SECRET)
 
     @staticmethod
     def init_app(app):

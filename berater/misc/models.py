@@ -21,7 +21,7 @@ class Transaction:
             engine.session.commit()
 
 
-pool = ConnectionPool(decode_responses=True)
+pool = ConnectionPool(host='redis', decode_responses=True)
 redis_client = Redis(connection_pool=pool)
 
 
