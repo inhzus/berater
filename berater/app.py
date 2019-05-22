@@ -45,3 +45,6 @@ def create_app(config_name='dev'):
     app.register_blueprint(error)
 
     return app
+
+
+app = create_app()
