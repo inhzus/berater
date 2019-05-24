@@ -7,4 +7,5 @@ git fetch;
 git reset origin/master --hard;
 git clean -df;
 mv ~/.env ./;
+docker-compose restart berater;
 "
