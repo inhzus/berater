@@ -28,11 +28,11 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile.dev
-    command: bash -c "/wait-for-it.sh mysql:3306 -- flask run --host=0.0.0.0 --port=80"
+    command: bash -c "/wait-for-it.sh mysql:3306 -- flask run --host=127.0.0.1 --port=5000"
     env_file:
       - .env
     ports:
-      - "80:80"
+      - "127.0.0.1:5000:5000"
     volumes:
       - "./conf/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf"
     links:
