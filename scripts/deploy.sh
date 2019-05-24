@@ -8,4 +8,5 @@ git reset origin/master --hard;
 git clean -df;
 mv ~/.env ./;
 docker-compose restart berater;
+sudo service nginx restart;
 "
