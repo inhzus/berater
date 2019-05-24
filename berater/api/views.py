@@ -51,7 +51,11 @@ def refresh_token():
 @api.route('/token', methods=['GET'])
 @token_required
 def check_token():
-    return Response().json()
+    with Transaction() as session:
+        student: StudentTable = session.query(StudentTable).filter(StudentTable.openid == current_identity).first()
+        stuid = session.query(SourceStudentTable.stuid) \
+            .filter(SourceStudentTable.id_card == student.id_card).first().stuid if student else ''
+    return Response(stuid=stuid).json()
 
 
 # Test API: get token
