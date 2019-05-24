@@ -5,9 +5,10 @@ import random
 
 import requests as rq
 from flask import Blueprint, request, current_app
+from sqlalchemy import and_, or_
 from werkzeug.exceptions import BadRequest, Unauthorized, InternalServerError, NotFound, Conflict
 
-from berater.misc import Response, CandidateTable, StudentTable, Transaction
+from berater.misc import Response, CandidateTable, StudentTable, SourceStudentTable, Transaction
 from berater.utils import (token_required, get_crypto_token, current_identity,
                            MemoryCache, candidate_answer)
 from .utils import get_openid_by_code, send_verify_code
@@ -136,9 +137,13 @@ def student_signup():
     if len(keys) != len(expected):
         raise BadRequest('Require params: {}, only get {}'
                          .format(', '.join(expected), ', '.join(keys)))
-    # TODO Find row from public database where id_card equals and it matches id
     student = StudentTable(openid=current_identity, phone=cached.get('phone'), id_card=params.get('id_card'))
     with Transaction() as session:
+        if not session.query(SourceStudentTable).filter(
+                and_(SourceStudentTable.id_card == params.get('id_card'),
+                     or_(SourceStudentTable.admission_id == params.get('id'),
+                         SourceStudentTable.stuid == params.get('id')))).first():
+            raise NotFound('Correspond id of id_card not found')
         if session.query(StudentTable).filter(StudentTable.openid == current_identity).first():
             raise Conflict('Student has been posted')
         session.add(student)

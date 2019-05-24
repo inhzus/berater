@@ -44,13 +44,17 @@ class StudentTable(engine.Model):
     id_card = engine.Column(engine.String(18), nullable=False)
 
 
-class FaceStudentTable(engine.Model):
+class SourceStudentTable(engine.Model):
     __tablename__ = 'face_student'
     # __bind_key__ = 'local'
     stuid = engine.Column(engine.String(12), primary_key=True)
     origin = engine.Column(engine.String(10), index=True)
     gender = engine.Column(engine.String(2))
     department = engine.Column(engine.String(32), index=True)
+    id_card = engine.Column(engine.String(20), index=True)
+    admission_id = engine.Column(engine.String(20), index=True)
 
     def to_dict(self):
-        return dict(stuid=self.stuid, origin=self.origin, gender=self.gender, department=self.department)
+        return dict(stuid=self.stuid, origin=self.origin,
+                    gender=self.gender, department=self.department,
+                    id_card=self.id_card, admission_id=self.admission_id)
