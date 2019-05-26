@@ -45,7 +45,7 @@ class StudentTable(engine.Model):
 
 
 class SourceStudentTable(engine.Model):
-    __tablename__ = 'face_student'
+    __tablename__ = 'source_student'
     # __bind_key__ = 'local'
     stuid = engine.Column(engine.String(12), primary_key=True)
     origin = engine.Column(engine.String(10), index=True)
