@@ -53,8 +53,13 @@ def refresh_token():
 def check_token():
     with Transaction() as session:
         student: StudentTable = session.query(StudentTable).filter(StudentTable.openid == current_identity).first()
-        stuid = session.query(SourceStudentTable.stuid) \
-            .filter(SourceStudentTable.id_card == student.id_card).first().stuid if student else ''
+        stuid = ''
+        if student:
+            source_student = session.query(SourceStudentTable.stuid) \
+                .filter(SourceStudentTable.id_card == student.id_card).first()
+            stuid = ''
+            if source_student:
+                stuid = source_student.stuid
     return Response(stuid=stuid).json()
 
 
