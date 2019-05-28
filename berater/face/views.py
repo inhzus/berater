@@ -16,7 +16,7 @@ face = Blueprint('face', __name__)
 @face.route('/students')
 @token_required
 def get_students():
-    params = {k: request.args.get(k, '') for k in ['department', 'stuid', 'origin', 'field']}
+    params = {k: request.args.get(k, '') for k in ['department', 'stuid', 'origin', 'field', 'name']}
 
     field_arg: str = params.pop('field', '')
     if not field_arg:

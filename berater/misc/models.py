@@ -48,6 +48,7 @@ class SourceStudentTable(engine.Model):
     __tablename__ = 'source_student'
     # __bind_key__ = 'local'
     stuid = engine.Column(engine.String(12), primary_key=True)
+    name = engine.Column(engine.String(16))
     origin = engine.Column(engine.String(10), index=True)
     gender = engine.Column(engine.String(2))
     department = engine.Column(engine.String(32), index=True)
