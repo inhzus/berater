@@ -48,6 +48,7 @@ class SourceStudentTable(engine.Model):
     __tablename__ = 'source_student'
     # __bind_key__ = 'local'
     stuid = engine.Column(engine.String(12), primary_key=True)
+    name = engine.Column(engine.String(16))
     origin = engine.Column(engine.String(10), index=True)
     gender = engine.Column(engine.String(2))
     department = engine.Column(engine.String(32), index=True)
@@ -55,6 +56,6 @@ class SourceStudentTable(engine.Model):
     admission_id = engine.Column(engine.String(20), index=True)
 
     def to_dict(self):
-        return dict(stuid=self.stuid, origin=self.origin,
+        return dict(stuid=self.stuid, origin=self.origin, name=self.name,
                     gender=self.gender, department=self.department,
                     id_card=self.id_card, admission_id=self.admission_id)
