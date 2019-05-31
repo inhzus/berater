@@ -26,6 +26,9 @@ class BaseConfig(object):
     }
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_POOL_SIZE = 5
+    APP_TOKEN = {
+        'face': getenv('APP_TOKEN_FACE', '')
+    }
 
     # noinspection PyUnresolvedReferences
     API_KEY = getenv('API_KEY', '')
