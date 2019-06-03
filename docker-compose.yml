@@ -42,10 +42,10 @@ services:
 
   wx-auth:
     container_name: berater_wx_auth
-    image: registry.cn-hangzhou.aliyuncs.com/inhzus/wx-auth:latest
+    image: registry.cn-shenzhen.aliyuncs.com/inhzus/wx-auth:latest
     ports:
-      - "8001:80"
-      - "8002:443"
+      - "127.0.0.1:8001:80"
+      - "127.0.0.1:8002:443"
 
 volumes:
   datavolume: 
