@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 # created by inhzus
 
-from berater.utils.wechat_sdk import AccessToken, Url, Communicate
-from berater.config import config, MENU
 import json
+
+from berater.config import config, MENU
+from berater.utils.wechat_sdk import AccessToken, Url, Communicate
 
 
 def create_menu():
@@ -11,9 +12,9 @@ def create_menu():
     if token:
         url = Url.create_menu.format(access_token=token)
         data = json.dumps(MENU, ensure_ascii=False).encode('utf-8')
-        return 'errcode' in Communicate.post(url, data=data)
-    return False
+        ret = Communicate.post(url, data=data)
+        print(ret)
 
 
 if __name__ == '__main__':
-    print('Menu create' if create_menu() else 'Menu create failed')
+    create_menu()

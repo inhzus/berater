@@ -2,8 +2,9 @@
 # created by inhzus
 
 
-from berater.utils.wechat_sdk import Url
 from os import getenv
+
+from berater.utils.wechat_sdk import Url
 
 
 class BaseConfig(object):
@@ -36,6 +37,7 @@ class BaseConfig(object):
     EXPRESS_APP_CODE = getenv('EXPRESS_APP_CODE', '')
     SMS_ACCESS_KEY = getenv('SMS_ACCESS_KEY', '')
     SMS_ACCESS_SECRET = getenv('SMS_ACCESS_SECRET', '')
+
     # from .secret import (API_KEY, API_SECRET, EXPRESS_APP_CODE, SMS_ACCESS_KEY, SMS_ACCESS_SECRET)
 
     @staticmethod
@@ -45,7 +47,7 @@ class BaseConfig(object):
 
 class DevelopmentConfig(BaseConfig):
     DEBUG = True
-    SERVER_URL = 'http://weixinbak.njunova.com'
+    SERVER_URL = 'http://weixin.njunova.com'
     LOCAL_URL = 'http://localhost:5000'
     # noinspection SpellCheckingInspection
     CRYPTO_KEY = b'ha0jkDDbnn9PT0UKCz1eCZjhVvCVwYWpaG5x2T_P1xo='
@@ -71,7 +73,20 @@ MENU = {
             'name': '服务号相关功能正在开发',
             'url': Url.oauth2_new_page.format(
                 appid=config[0].API_KEY,
-                redirect_url='{}/chat/test'.format(DevelopmentConfig.SERVER_URL))
+                redirect_url='{}/chat/test'.format(config[0].SERVER_URL))
+        },
+        {
+            'name': '认证',
+            'sub_button': [
+                {
+                    'type': 'view',
+                    'name': '学号认证',
+                    'url': Url.oauth2_new_page.format(
+                        appid=config[0].API_KEY,
+                        redirect_url='{}/?type=student'.format(config[0].SERVER_URL)
+                    )
+                }
+            ]
         }
     ]
 }
