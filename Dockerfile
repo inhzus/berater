@@ -14,6 +14,3 @@ RUN chmod +x /wait-for-it.sh
 ENV FLASK_APP=/berater/app.py
 ENV FLASK_ENV=development
 
-RUN apt update
-RUN apt install -y supervisor
-
