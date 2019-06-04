@@ -20,7 +20,7 @@ class BaseConfig(object):
 
     # Flask SQLAlchemy
     SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://{}:{}@mysql/{}'.format(
-        getenv('MYSQL_USER', ''), getenv('MYSQL_PASSWORD', ''), getenv('MYSQL_DATABASE', ''))
+        getenv('MYSQL_USER'), getenv('MYSQL_PASSWORD'), getenv('MYSQL_DATABASE'))
     # SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:root@mysql/berater'
     SQLALCHEMY_BINDS = {
         'local': SQLALCHEMY_DATABASE_URI
@@ -32,11 +32,11 @@ class BaseConfig(object):
     }
 
     # noinspection PyUnresolvedReferences
-    API_KEY = getenv('API_KEY', '')
-    API_SECRET = getenv('API_SECRET', '')
-    EXPRESS_APP_CODE = getenv('EXPRESS_APP_CODE', '')
-    SMS_ACCESS_KEY = getenv('SMS_ACCESS_KEY', '')
-    SMS_ACCESS_SECRET = getenv('SMS_ACCESS_SECRET', '')
+    API_KEY = getenv('API_KEY')
+    API_SECRET = getenv('API_SECRET')
+    EXPRESS_APP_CODE = getenv('EXPRESS_APP_CODE')
+    SMS_ACCESS_KEY = getenv('SMS_ACCESS_KEY')
+    SMS_ACCESS_SECRET = getenv('SMS_ACCESS_SECRET')
 
     # from .secret import (API_KEY, API_SECRET, EXPRESS_APP_CODE, SMS_ACCESS_KEY, SMS_ACCESS_SECRET)
 
@@ -50,14 +50,17 @@ class DevelopmentConfig(BaseConfig):
     SERVER_URL = 'http://weixin.njunova.com'
     LOCAL_URL = 'http://localhost:5000'
     # noinspection SpellCheckingInspection
-    CRYPTO_KEY = b'ha0jkDDbnn9PT0UKCz1eCZjhVvCVwYWpaG5x2T_P1xo='
+    CRYPTO_KEY = 'ha0jkDDbnn9PT0UKCz1eCZjhVvCVwYWpaG5x2T_P1xo='
 
     # Flask SQLAlchemy
     SQLALCHEMY_ECHO = True
 
 
 class ProductionConfig(BaseConfig):
-    pass
+    SERVER_URL = 'http://weixin.njunova.com'
+    # noinspection SpellCheckingInspection
+    CRYPTO_KEY = getenv('CRYPTO_KEY')
+    SQLALCHEMY_ECHO = True
 
 
 config = {

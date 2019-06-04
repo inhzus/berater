@@ -57,7 +57,7 @@ class Crypto:
     def init_app(self, app):
         for k, v in CONFIG_DEFAULTS.items():
             app.config.setdefault(k, v)
-        self.fer = Fernet(app.config['CRYPTO_KEY'])
+        self.fer = Fernet(app.config['CRYPTO_KEY'].encode())
         app.extensions['crypto'] = self
 
     def encrypt(self, data: str):
