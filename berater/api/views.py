@@ -179,7 +179,17 @@ def student_update():
 
 @api.route('/qna', methods=['GET'])
 @token_required
-def bert_qna():
+def qna():
+    q = request.args.get('q', '')
+    if not q:
+        raise BadRequest('Request arg "q" missing')
+    answer = '{}.answer'.format(q)
+    return Response(answer=answer).json()
+
+
+@api.route('/bert', methods=['GET'])
+@token_required
+def bert():
     q = request.args.get('q', '')
     if not q:
         raise BadRequest('Request arg "q" missing')
@@ -189,7 +199,7 @@ def bert_qna():
     # TODO
     # filter = or_(*(QNA.q.like(a) for a in answer[0]))
     # query = engine.session.query(QNA.q, QNA.a).filter(filter)
-    # qna = [{'q': row.q, 'a': row.a} for row in query.all()]
-    # q_list, a_list = map(qna, zip(*qna))
-    qna = [{'q': answer[0][i], 'a': answer[1][i]} for i in range(len(answer[0]))]
-    return Response(qna=qna).json()
+    # ret = [{'q': row.q, 'a': row.a} for row in query.all()]
+    # q_list, a_list = map(ret, zip(*ret))
+    ret = [{'q': answer[0][i], 'a': answer[1][i]} for i in range(len(answer[0]))]
+    return Response(answer=ret).json()
