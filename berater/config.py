@@ -84,7 +84,7 @@ MENU = {
             'sub_button': [
                 {
                     'type': 'view',
-                    'name': '校外认证',
+                    'name': '问答机器人',
                     'url': Url.oauth2_new_page.format(
                         appid=config[0].API_KEY,
                         redirect_url=quote('{}/?type=candidate&url=https://weixin.njunova.com/qna/'
