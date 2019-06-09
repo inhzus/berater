@@ -67,7 +67,7 @@ class Url(object):
                         "access_token={access_token}&openid={openid}"
     oauth2_new_page = "https://open.weixin.qq.com/connect/oauth2/authorize?" \
                       "appid={appid}&redirect_uri={redirect_url}&response_type=code&" \
-                      "scope=snsapi_base&state=123#wechat_redirect"
+                      "scope=snsapi_base#wechat_redirect"
 
     # 素材管理模块
     upload_temp_media = "https://api.weixin.qq.com/cgi-bin/media/upload?" \

@@ -3,6 +3,7 @@
 
 
 from os import getenv
+from urllib.parse import quote
 
 from berater.utils.wechat_sdk import Url
 
@@ -86,7 +87,8 @@ MENU = {
                     'name': '校外认证',
                     'url': Url.oauth2_new_page.format(
                         appid=config[0].API_KEY,
-                        redirect_url='{}/?type=candidate'.format(config[0].SERVER_URL)
+                        redirect_url=quote('{}/?type=candidate&url=https://weixin.njunova.com/qna/'
+                                           .format(config[0].SERVER_URL))
                     )
                 },
                 {
