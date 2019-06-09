@@ -66,7 +66,7 @@ class ProductionConfig(BaseConfig):
 config = {
     'dev': DevelopmentConfig,
     'pro': ProductionConfig,
-    0: DevelopmentConfig
+    0: ProductionConfig
 }
 
 MENU = {
@@ -76,14 +76,22 @@ MENU = {
             'name': '服务号相关功能正在开发',
             'url': Url.oauth2_new_page.format(
                 appid=config[0].API_KEY,
-                redirect_url='{}/chat/test'.format(config[0].SERVER_URL))
+                redirect_url='{}/chat/'.format(config[0].SERVER_URL))
         },
         {
             'name': '认证',
             'sub_button': [
                 {
                     'type': 'view',
-                    'name': '学号认证',
+                    'name': '校外认证',
+                    'url': Url.oauth2_new_page.format(
+                        appid=config[0].API_KEY,
+                        redirect_url='{}/?type=candidate'.format(config[0].SERVER_URL)
+                    )
+                },
+                {
+                    'type': 'view',
+                    'name': '新生认证',
                     'url': Url.oauth2_new_page.format(
                         appid=config[0].API_KEY,
                         redirect_url='{}/?type=student'.format(config[0].SERVER_URL)

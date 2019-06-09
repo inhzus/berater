@@ -47,4 +47,4 @@ def create_app(config_name='dev'):
     return app
 
 
-app = create_app()
+app = create_app('pro')
