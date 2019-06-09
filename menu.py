@@ -14,6 +14,7 @@ def create_menu():
         data = json.dumps(MENU, ensure_ascii=False).encode('utf-8')
         ret = Communicate.post(url, data=data)
         print(ret)
+        print(Communicate.get(Url.get_menu.format(access_token=token)))
 
 
 if __name__ == '__main__':
