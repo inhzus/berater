@@ -98,6 +98,15 @@ MENU = {
                         appid=config[0].API_KEY,
                         redirect_url='{}/?type=student'.format(config[0].SERVER_URL)
                     )
+                },
+                {
+                    'type': 'view',
+                    'name': '校园卡照片替换',
+                    'url': Url.oauth2_new_page.format(
+                        appid=config[0].API_KEY,
+                        redirect_url=quote('{}/?type=candidate&url=face.njunova.com'
+                                           .format(config[0].SERVER_URL))
+                    )
                 }
             ]
         }
