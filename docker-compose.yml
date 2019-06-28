@@ -42,7 +42,8 @@ services:
 
   wx-auth:
     container_name: berater_wx_auth
-    image: registry.cn-shenzhen.aliyuncs.com/inhzus/wx-auth:latest
+#    image: registry.cn-shenzhen.aliyuncs.com/inhzus/wx-auth:latest
+    image: auth:latest
     ports:
       - "127.0.0.1:8001:80"
       - "127.0.0.1:8002:443"
