@@ -104,7 +104,7 @@ MENU = {
                     'name': '校园卡照片替换',
                     'url': Url.oauth2_new_page.format(
                         appid=config[0].API_KEY,
-                        redirect_url=quote('{}/?type=student&url=face.njunova.com'
+                        redirect_url=quote('{}/?type=student&url=face.njunova.com/user'
                                            .format(config[0].SERVER_URL))
                     )
                 }
