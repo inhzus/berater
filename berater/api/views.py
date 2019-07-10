@@ -52,15 +52,16 @@ def refresh_token():
 @token_required
 def check_token():
     with Transaction() as session:
-        student: StudentTable = session.query(StudentTable).filter(StudentTable.openid == current_identity.openid).first()
-        stuid = ''
+        student: StudentTable = session.query(StudentTable).filter(
+            StudentTable.openid == current_identity.openid).first()
+        admission_id = stuid = ''
         if student:
-            source_student = session.query(SourceStudentTable.stuid) \
-                .filter(SourceStudentTable.id_card == student.id_card).first()
-            stuid = ''
+            source_student: SourceStudentTable = session.query(SourceStudentTable.stuid).filter(
+                SourceStudentTable.id_card == student.id_card).first()
             if source_student:
                 stuid = source_student.stuid
-    return Response(stuid=stuid).json()
+                admission_id = source_student.admission_id
+    return Response(stuid=stuid, admission_id=admission_id).json()
 
 
 # Test API: get token
