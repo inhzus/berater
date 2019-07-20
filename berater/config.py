@@ -74,41 +74,29 @@ MENU = {
     'button': [
         {
             'type': 'view',
-            'name': '服务号相关功能正在开发',
+            'name': '照片替换',
             'url': Url.oauth2_new_page.format(
                 appid=config[0].API_KEY,
-                redirect_url='{}/chat/'.format(config[0].SERVER_URL))
+                redirect_url=quote('{}/?type=student&url=face.njunova.com/user'
+                                   .format(config[0].SERVER_URL))
+            )
         },
         {
-            'name': '认证',
-            'sub_button': [
-                {
-                    'type': 'view',
-                    'name': '问答机器人',
-                    'url': Url.oauth2_new_page.format(
-                        appid=config[0].API_KEY,
-                        redirect_url=quote('{}/?type=candidate&url=weixin.njunova.com/qna/'
-                                           .format(config[0].SERVER_URL))
-                    )
-                },
-                {
-                    'type': 'view',
-                    'name': '新生认证',
-                    'url': Url.oauth2_new_page.format(
-                        appid=config[0].API_KEY,
-                        redirect_url='{}/?type=student'.format(config[0].SERVER_URL)
-                    )
-                },
-                {
-                    'type': 'view',
-                    'name': '校园卡照片替换',
-                    'url': Url.oauth2_new_page.format(
-                        appid=config[0].API_KEY,
-                        redirect_url=quote('{}/?type=student&url=face.njunova.com/user'
-                                           .format(config[0].SERVER_URL))
-                    )
-                }
-            ]
-        }
+            'type': 'view',
+            'name': '智能问答',
+            'url': Url.oauth2_new_page.format(
+                appid=config[0].API_KEY,
+                redirect_url=quote('{}/?type=candidate&url=weixin.njunova.com/qna/'
+                                   .format(config[0].SERVER_URL))
+            )
+        },
+        {
+            'type': 'view',
+            'name': '录取查询',
+            'url': Url.oauth2_new_page.format(
+                appid=config[0].API_KEY,
+                redirect_url=quote('{}/?type=student&http=1&url=bkzs.njunova.com/api.php'.format(config[0].SERVER_URL))
+            )
+        },
     ]
 }

@@ -3,7 +3,7 @@
 
 from traceback import extract_tb, StackSummary
 
-from flask import Blueprint, jsonify, current_app
+from flask import Blueprint, jsonify, current_app, request
 from werkzeug.exceptions import *
 
 error = Blueprint('errors', __name__)
@@ -11,7 +11,7 @@ error = Blueprint('errors', __name__)
 
 @error.app_errorhandler(HTTPException)
 def handle_http_exceptions(err: HTTPException):
-    current_app.logger.warning('code: {}, http exception: {}'.format(err.code, err.description))
+    current_app.logger.warning('code: {}, http exception: {}, headers: {}'.format(err.code, err.description, request.headers))
     return jsonify(code=err.code, error=err.description, data=None)
 
 
