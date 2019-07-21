@@ -16,7 +16,7 @@ face = Blueprint('face', __name__)
 @face.route('/students', methods=['GET'])
 @token_required(role=Permission.FACE)
 def get_students():
-    params = {k: request.args.get(k, '') for k in ['department', 'stuid', 'origin', 'field', 'name']}
+    params = {k: request.args.get(k, '') for k in ['department', 'admission_id', 'origin', 'field', 'name']}
 
     field_arg: str = params.pop('field', '')
     if not field_arg:
@@ -33,7 +33,7 @@ def get_students():
         def trait(student: SourceStudentTable):
             return {k: getattr(student, k) for k in columns}
 
-    ids: List[str] = [s for s in params.pop('stuid', '').split(',') if s]
+    ids: List[str] = [s for s in params.pop('admission_id', '').split(',') if s]
     for idx, id_ in enumerate(ids):
         if id_.startswith('*'):
             id_ = '%' + id_[1:]
