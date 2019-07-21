@@ -44,6 +44,6 @@ def get_students():
     params = {k: v for (k, v) in params.items() if v}
     query: orm.query = engine.session.query(*fields).filter_by(**params)
     if ids:
-        id_filter = or_(*(SourceStudentTable.stuid.like(id_) for id_ in ids))
+        id_filter = or_(*(SourceStudentTable.admission_id.like(id_) for id_ in ids))
         query: orm.query = query.filter(id_filter)
     return Response(students=[trait(student) for student in query.all()]).json()
