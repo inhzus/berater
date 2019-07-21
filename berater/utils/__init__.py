@@ -3,5 +3,5 @@
 
 from .bert import candidate_answer
 from .cache import MemoryCache
-from .crypto import token_required, Crypto, get_crypto_token, current_identity
+from .crypto import current_identity, get_crypto_token, token_required, Crypto, Permission
 from .sms import AliSMS

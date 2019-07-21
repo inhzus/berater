@@ -19,7 +19,7 @@ code_cache = MemoryCache('code', 60 * 60)
 
 
 @api.route('/ems')
-@token_required
+@token_required()
 def ems_logistics():
     no = request.args.get('no', '')
     if not no:
@@ -43,13 +43,13 @@ def get_token():
 
 
 @api.route('/token', methods=['PUT'])
-@token_required
+@token_required()
 def refresh_token():
     return Response(token=get_crypto_token(current_identity.openid)).json()
 
 
 @api.route('/token', methods=['GET'])
-@token_required
+@token_required()
 def check_token():
     with Transaction() as session:
         student: StudentTable = session.query(StudentTable).filter(
@@ -75,7 +75,7 @@ def test_token(openid):
 
 
 @api.route('/code', methods=['POST'])
-@token_required
+@token_required()
 def send_code():
     phone = request.json.get('phone', '')
     if not phone:
@@ -89,7 +89,7 @@ def send_code():
 
 
 @api.route('/code/<input_code>', methods=['GET'])
-@token_required
+@token_required()
 def check_code(input_code):
     cached = code_cache.get(current_identity.openid)
     if cached.get('code', '') != input_code:
@@ -100,7 +100,7 @@ def check_code(input_code):
 
 
 @api.route('/candidate', methods=['POST'])
-@token_required
+@token_required()
 def candidate_signup():
     cached = code_cache.get(current_identity.openid)
     if not cached.get('status', False):
@@ -119,7 +119,7 @@ def candidate_signup():
 
 
 @api.route('/candidate', methods=['PATCH'])
-@token_required
+@token_required()
 def candidate_update():
     expected = ['phone', 'name', 'province', 'city', 'score', 'subject']
     params = {k: request.json.get(k) for k in expected if k in request.json}
@@ -137,7 +137,7 @@ def candidate_update():
 
 
 @api.route('/student', methods=['POST'])
-@token_required
+@token_required()
 def student_signup():
     cached = code_cache.get(current_identity.openid)
     if not cached.get('status', False):
@@ -162,7 +162,7 @@ def student_signup():
 
 
 @api.route('student', methods=['PATCH'])
-@token_required
+@token_required()
 def student_update():
     expected = ['phone', 'id_card', 'admission_id', 'student_id']
     params = {k: request.json.get(k) for k in expected if k in request.json}
@@ -180,7 +180,7 @@ def student_update():
 
 
 @api.route('/qna', methods=['GET'])
-@token_required
+@token_required()
 def qna():
     q = request.args.get('q', '')
     if not q:
@@ -190,7 +190,7 @@ def qna():
 
 
 @api.route('/bert', methods=['GET'])
-@token_required
+@token_required()
 def bert():
     q = request.args.get('q', '')
     if not q:

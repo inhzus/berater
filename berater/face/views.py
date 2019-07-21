@@ -8,13 +8,13 @@ from flask_sqlalchemy import orm
 from sqlalchemy import or_
 
 from berater.misc import Response, SourceStudentTable, engine
-from berater.utils import token_required
+from berater.utils import token_required, Permission
 
 face = Blueprint('face', __name__)
 
 
-@face.route('/students')
-@token_required
+@face.route('/students', methods=['GET'])
+@token_required(role=Permission.FACE)
 def get_students():
     params = {k: request.args.get(k, '') for k in ['department', 'stuid', 'origin', 'field', 'name']}
 

@@ -23,6 +23,7 @@ class Permission(Enum):
     EMPTY = 0
     USER = 1
     FACE = 2
+
     @staticmethod
     def loads(s: str) -> 'Permission':
         d = {
@@ -72,33 +73,38 @@ _crypto = LocalProxy(lambda: current_app.extensions['crypto'])
 current_identity: User = LocalProxy(lambda: getattr(_request_ctx_stack.top, 'current_identity', None))
 
 
-def _token_required():
+def _token_required(role: Permission):
     authorization_list: List[str] = request.headers.get(current_app.config['CRYPTO_HEADER_KEY'], '').split(' ')
     if len(authorization_list) < 2:
         raise Unauthorized('Token not in request headers')
-    if len(authorization_list) == 3:
+    elif len(authorization_list) == 3:
         app_name = authorization_list[1]
         token = authorization_list[2]
         app_token: dict = current_app.config['APP_TOKEN']
         if app_token.get(app_name, '') != token:
             raise Unauthorized('Invalid app token')
         permission = Permission.loads(app_name)
-        _request_ctx_stack.top.current_identity = User('', permission)
-        return
-    token = authorization_list[1]
-    try:
-        _request_ctx_stack.top.current_identity = identity = User.loads(_crypto.decrypt(token))
-    except InvalidToken:
-        raise Unauthorized('Invalid Token')
-    if identity is None:
-        raise Unauthorized('Token in request headers empty')
+        _request_ctx_stack.top.current_identity = identity = User('', permission)
+    else:
+        token = authorization_list[1]
+        try:
+            _request_ctx_stack.top.current_identity = identity = User.loads(_crypto.decrypt(token))
+        except InvalidToken:
+            raise Unauthorized('Invalid Token')
+        if identity is None:
+            raise Unauthorized('Token in request headers empty')
+    if identity.role != role:
+        raise Unauthorized('Token role not matched, get {}. expect {}'.format(identity.role, role))
 
 
-def token_required(func):
-    @wraps(func)
-    def decorator(*args, **kwargs):
-        _token_required()
-        return func(*args, **kwargs)
+def token_required(role=Permission.USER):
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            _token_required(role)
+            return func(*args, **kwargs)
+
+        return wrapper
 
     return decorator
 
