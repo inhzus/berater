@@ -3,5 +3,5 @@ __pycache__/
 .idea/
 .vscode/
 secret.py
-.env
+.env*
 *.pyc
