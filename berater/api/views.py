@@ -185,7 +185,7 @@ def qna():
     q = request.args.get('q', '')
     if not q:
         raise BadRequest('Request arg "q" missing')
-    answer = '{}.answer'.format(q)
+    answer = '功能正在开发中，敬请期待'
     return Response(answer=answer).json()
 
 

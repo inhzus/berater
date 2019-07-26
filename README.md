@@ -21,15 +21,3 @@ Wechat Service Back-End of Nanjing University Undergraduate Admissions
 - \[Style\]: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)
 
 以上 Commit Type 参考 [Hexo Next Commit Message Rules](https://github.com/theme-next/hexo-theme-next/blob/master/.github/CONTRIBUTING.md#commit-messages-rules)
-
-### TODO
-
-- [ ] 返回多个问答对的咨询 API
-
-- [x] Flask-JWT 与其 API
-
-- [ ] 数据库搭建
-
-- [x] 验证码 API
-
-- [x] 快递查询 API
