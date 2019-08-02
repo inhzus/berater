@@ -8,10 +8,10 @@ from flask import Blueprint, request, current_app
 from sqlalchemy import and_, or_
 from werkzeug.exceptions import BadRequest, Unauthorized, InternalServerError, NotFound, Conflict
 
+from berater.api.utils import get_openid_by_code, send_verify_code
 from berater.misc import Response, CandidateTable, StudentTable, SourceStudentTable, Transaction
 from berater.utils import (token_required, get_crypto_token, current_identity,
-                           MemoryCache, candidate_answer)
-from .utils import get_openid_by_code, send_verify_code
+                           MemoryCache, candidate_answer, tf_idf_client)
 
 api = Blueprint('api', __name__)
 
@@ -185,7 +185,7 @@ def qna():
     q = request.args.get('q', '')
     if not q:
         raise BadRequest('Request arg "q" missing')
-    answer = '功能正在开发中，敬请期待'
+    answer = '\n'.join(tf_idf_client.find_all(q))
     return Response(answer=answer).json()
 
 
