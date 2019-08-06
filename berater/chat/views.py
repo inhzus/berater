@@ -8,7 +8,8 @@ from xml.etree import ElementTree
 import requests as rq
 from flask import Blueprint, request, make_response, current_app
 
-from berater.misc import Response
+from berater.misc import Response, Transaction, StudentTable, SourceStudentTable
+from berater.utils import current_identity
 from berater.utils.wechat_sdk import MsgFormat
 
 chat = Blueprint('chat', __name__)
@@ -35,7 +36,19 @@ def wechat_msg():
         for item in ElementTree.fromstring(data):
             msg[item.tag] = item.text
         if verification():
-            reply = MsgFormat.text % (msg['FromUserName'], msg['ToUserName'], str(time()), 'Developing')
+            content = 'Developing'
+            if msg['Event'] == 'CLICK':
+                content = '请先点击其他任一功能进行信息绑定'
+                with Transaction() as session:
+                    student: StudentTable = session.query(StudentTable).filter(
+                        StudentTable.openid == current_identity.openid).first()
+                    if student:
+                        source_student: SourceStudentTable = session.query(
+                            SourceStudentTable.stuid, SourceStudentTable.admission_id
+                        ).filter(SourceStudentTable.id_card == student.id_card).first()
+                        if source_student:
+                            content = '学号: {}'.format(source_student.stuid)
+            reply = MsgFormat.text % (msg['FromUserName'], msg['ToUserName'], str(time()), content)
             response = make_response(reply)
             response.content_type = 'application/xml'
             return response
