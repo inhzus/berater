@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # created by inhzus
 
+import logging
 import os
 from json import JSONEncoder
 from logging.handlers import TimedRotatingFileHandler
@@ -30,6 +31,8 @@ def create_app(config_name='dev'):
         os.mkdir('log')
     handler = TimedRotatingFileHandler(
         'log/berater.log', delay=False, encoding='utf-8', interval=1, utc=True, when='D')
+    handler.setLevel(logging.DEBUG)
+    handler.setFormatter(logging.Formatter('[%(asctime)s] %(levelname)s in %(module)s: %(message)s'))
     app.logger.addHandler(handler)
 
     # Json encoder set ensure ASCII false
