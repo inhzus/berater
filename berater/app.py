@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 # created by inhzus
 
+import os
+from json import JSONEncoder
+from logging.handlers import TimedRotatingFileHandler
+
 from flask import Flask
 
-from json import JSONEncoder
-
 from berater.config import config
-from berater.utils import Crypto
 from berater.misc import engine
+from berater.utils import Crypto
 
 
 def create_app(config_name='dev'):
@@ -23,6 +25,12 @@ def create_app(config_name='dev'):
 
     engine.init_app(app)
     engine.create_all(app=app)
+
+    if not os.path.exists('log'):
+        os.mkdir('log')
+    handler = TimedRotatingFileHandler(
+        'log/berater.log', delay=False, encoding='utf-8', interval=1, utc=True, when='D')
+    app.logger.addHandler(handler)
 
     # Json encoder set ensure ASCII false
     class NonASCIIEncoder(JSONEncoder):
