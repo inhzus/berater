@@ -41,7 +41,7 @@ def wechat_msg():
                 content = '请先点击其他任一功能进行信息绑定'
                 with Transaction() as session:
                     student: StudentTable = session.query(StudentTable).filter(
-                        StudentTable.openid == current_identity.openid).first()
+                        StudentTable.openid == msg['FromUserName']).first()
                     if student:
                         source_student: SourceStudentTable = session.query(
                             SourceStudentTable.stuid, SourceStudentTable.admission_id
