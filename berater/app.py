@@ -36,6 +36,7 @@ def create_app(config_name='dev'):
     logging.getLogger('werkzeug').addHandler(handler)
     logging.getLogger('sqlalchemy').addHandler(handler)
     app.logger.addHandler(handler)
+    app.logger.setLevel(logging.DEBUG)
 
     # Json encoder set ensure ASCII false
     class NonASCIIEncoder(JSONEncoder):
