@@ -185,7 +185,7 @@ def qna():
     q = request.args.get('q', '')
     if not q:
         raise BadRequest('Request arg "q" missing')
-    answer = '\n'.join(tf_idf_client.find_all(q))
+    answer = '\n\n'.join(tf_idf_client.find_all(q))
     return Response(answer=answer).json()
 
 
