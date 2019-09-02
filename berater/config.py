@@ -81,22 +81,24 @@ MENU = {
                                    .format(config[0].SERVER_URL))
             )
         },
+#        {
+#            'type': 'click',
+#            'name': '学前教育',
+#            'key': 'BERATER_KEY1'
+#        },
         {
             'type': 'view',
-            'name': '智能问答',
+            'name': '学前教育',
             'url': Url.oauth2_new_page.format(
                 appid=config[0].API_KEY,
-                redirect_url=quote('{}/?type=candidate&url=weixin.njunova.com/qna/'
+                redirect_url=quote('{}/?type=student&url=weixin.njunova.com/qna'
                                    .format(config[0].SERVER_URL))
             )
         },
         {
-            'type': 'view',
-            'name': '录取查询',
-            'url': Url.oauth2_new_page.format(
-                appid=config[0].API_KEY,
-                redirect_url=quote('{}/?type=student&http=1&url=bkzs.njunova.com/api.php'.format(config[0].SERVER_URL))
-            )
+            'type': 'click',
+            'name': '学号查询',
+            'key': 'BERATER_KEY2'
         },
     ]
 }
