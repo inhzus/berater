@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 # created by inhzus
 
+import json
 from enum import Enum
 from functools import wraps
-import json
 from typing import List
 
 from cryptography.fernet import Fernet, InvalidToken
@@ -23,28 +23,36 @@ class Permission(Enum):
     EMPTY = 0
     USER = 1
     FACE = 2
+    NOVA_ADMIN = 3
 
     @staticmethod
     def loads(s: str) -> 'Permission':
         d = {
             'face': Permission.FACE,
-            'user': Permission.USER
+            'user': Permission.USER,
+            'nova_admin': Permission.NOVA_ADMIN
         }
         return d.get(s, Permission.EMPTY)
 
 
 class User:
-    def __init__(self, openid, role: Permission = Permission.USER):
+    @staticmethod
+    def default_roles():
+        return [Permission.USER]
+
+    def __init__(self, openid, roles: List[Permission] = None):
         self.openid = openid
-        self.role = role
+        self.roles = roles
+        if roles is None:
+            self.roles = [Permission.USER]
 
     def dumps(self):
-        return json.dumps({"openid": self.openid, "role": self.role.value})
+        return json.dumps({"openid": self.openid, "roles": [role.value for role in self.roles]})
 
     @staticmethod
     def loads(data):
         d = json.loads(data)
-        u = User(openid=d["openid"], role=Permission(d["role"]))
+        u = User(openid=d["openid"], roles=[Permission(role) for role in d["roles"]])
         return u
 
 
@@ -84,7 +92,7 @@ def _token_required(role: Permission):
         if app_token.get(app_name, '') != token:
             raise Unauthorized('Invalid app token')
         permission = Permission.loads(app_name)
-        _request_ctx_stack.top.current_identity = identity = User('', permission)
+        _request_ctx_stack.top.current_identity = identity = User('', [permission])
     else:
         token = authorization_list[1]
         try:
@@ -93,8 +101,8 @@ def _token_required(role: Permission):
             raise Unauthorized('Invalid Token')
         if identity is None:
             raise Unauthorized('Token in request headers empty')
-    if identity.role != role:
-        raise Unauthorized('Token role not matched, get {}. expect {}'.format(identity.role, role))
+    if role not in identity.roles:
+        raise Unauthorized('Token role not matched, get {}. expect {}'.format(identity.roles, role))
 
 
 def token_required(role=Permission.USER):
