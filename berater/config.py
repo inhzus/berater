@@ -81,11 +81,6 @@ MENU = {
                                    .format(config[0].SERVER_URL))
             )
         },
-#        {
-#            'type': 'click',
-#            'name': '学前教育',
-#            'key': 'BERATER_KEY1'
-#        },
         {
             'type': 'view',
             'name': '学前教育',

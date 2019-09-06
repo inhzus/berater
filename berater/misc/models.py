@@ -59,3 +59,15 @@ class SourceStudentTable(engine.Model):
         return dict(stuid=self.stuid, origin=self.origin, name=self.name,
                     gender=self.gender, department=self.department,
                     id_card=self.id_card, admission_id=self.admission_id)
+
+
+class NovaRegisterTable(engine.Model):
+    __tablename__ = 'nova_register_form'
+    stuid = engine.Column(engine.String(12), primary_key=True)
+    remark = engine.Column(engine.Text)
+
+
+class PrivilegeTable(engine.Model):
+    __tablename__ = 'privilege'
+    openid = engine.Column(engine.String(30), primary_key=True)
+    permission = engine.Column(engine.Integer(), primary_key=True)

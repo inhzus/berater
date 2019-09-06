@@ -21,16 +21,18 @@ CONFIG_DEFAULTS = {
 
 class Permission(Enum):
     EMPTY = 0
-    USER = 1
-    FACE = 2
-    NOVA_ADMIN = 3
+    ADMIN = 1
+    USER = 2
+    FACE = 3
+    NOVA_ADMIN = 4
 
     @staticmethod
     def loads(s: str) -> 'Permission':
         d = {
-            'face': Permission.FACE,
+            'admin': Permission.ADMIN,
             'user': Permission.USER,
-            'nova_admin': Permission.NOVA_ADMIN
+            'face': Permission.FACE,
+            'nova_admin': Permission.NOVA_ADMIN,
         }
         return d.get(s, Permission.EMPTY)
 
@@ -117,8 +119,8 @@ def token_required(role=Permission.USER):
     return decorator
 
 
-def get_crypto_token(id_: str):
-    return _crypto.encrypt(User(openid=id_).dumps())
+def gen_token(id_: str, roles: List[Permission]) -> str:
+    return _crypto.encrypt(User(openid=id_, roles=roles).dumps())
 
 
 if __name__ == '__main__':

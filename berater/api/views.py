@@ -10,7 +10,7 @@ from werkzeug.exceptions import BadRequest, Unauthorized, InternalServerError, N
 
 from berater.api.utils import get_openid_by_code, send_verify_code
 from berater.misc import Response, CandidateTable, StudentTable, SourceStudentTable, Transaction
-from berater.utils import (token_required, get_crypto_token, current_identity,
+from berater.utils import (token_required, current_identity, get_crypto_token,
                            MemoryCache, candidate_answer, tf_idf_client)
 
 api = Blueprint('api', __name__)

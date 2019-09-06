@@ -52,6 +52,9 @@ def create_app(config_name='dev'):
     from berater.face import face
     app.register_blueprint(face, url_prefix='/api/face')
 
+    from berater.admin import admin
+    app.register_blueprint(admin, url_prefix='/api/admin')
+
     from berater.api import api
     app.register_blueprint(api, url_prefix='/api')
 
