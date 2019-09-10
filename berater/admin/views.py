@@ -40,9 +40,9 @@ def gen_link(role):
         raise Unauthorized('admin privilege need')
     if Permission.loads(role) == Permission.EMPTY:
         return BadRequest('unknown role')
-    code = uuid.uuid4().hex
-    link_cache.set(code, role=role)
-    link = '{}{}?code={}'.format(current_app.config['SERVER_URL'], url_for('admin.auth'), code)
+    seq = uuid.uuid4().hex
+    link_cache.set(seq, role=role)
+    link = '{}{}?seq={}'.format(current_app.config['SERVER_URL'], url_for('admin.auth'), seq)
     return Response(link=gen_redirect_url(link)).json()
 
 
@@ -51,10 +51,10 @@ def auth():
     openid = get_openid(request.args.get('code', ''))
     if not openid:
         raise Unauthorized('code invalid')
-    code = request.args.get('code', None)
-    if code is None:
-        raise BadRequest('code empty')
-    cached = link_cache.get(code)
+    seq = request.args.get('seq', '')
+    if not seq:
+        raise BadRequest('seq empty')
+    cached = link_cache.get(seq)
     role = cached.get('role', '')
     if not role:
         return NotFound('link invalid')
