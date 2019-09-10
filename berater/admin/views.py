@@ -28,7 +28,7 @@ def get_openid(code: str) -> str:
 
 @admin.route('/go/link/<string:role>')
 def go_gen_link(role):
-    return redirect(gen_redirect_url(format(request.url_root[:-1] + url_for('admin.gen_link', role=role))))
+    return redirect(gen_redirect_url(format(current_app.config['SERVER_URL'] + url_for('admin.gen_link', role=role))))
 
 
 @admin.route('/link/<string:role>')
@@ -42,7 +42,7 @@ def gen_link(role):
         return BadRequest('unknown role')
     code = uuid.uuid4().hex
     link_cache.set(code, role=role)
-    link = '{}{}?code={}'.format(request.url_root, url_for('admin.auth'), code)
+    link = '{}{}?code={}'.format(current_app.config['SERVER_URL'], url_for('admin.auth'), code)
     return Response(link=gen_redirect_url(link)).json()
 
 
