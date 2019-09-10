@@ -55,6 +55,9 @@ def create_app(config_name='dev'):
     from berater.admin import admin
     app.register_blueprint(admin, url_prefix='/api/admin')
 
+    from berater.nova import nova
+    app.register_blueprint(nova, url_prefix='/api/nova')
+
     from berater.api import api
     app.register_blueprint(api, url_prefix='/api')
 

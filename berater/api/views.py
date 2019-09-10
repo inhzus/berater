@@ -161,7 +161,7 @@ def student_signup():
     return Response().json()
 
 
-@api.route('student', methods=['PATCH'])
+@api.route('/student', methods=['PATCH'])
 @token_required()
 def student_update():
     expected = ['phone', 'id_card', 'admission_id', 'student_id']
@@ -177,6 +177,21 @@ def student_update():
                 raise Unauthorized('Phone not verified')
         query.update(params)
     return Response().json()
+
+
+@api.route('/source', methods=['GET'])
+@token_required()
+def get_source_student_info():
+    with Transaction() as session:
+        query = session.query(StudentTable).filter(StudentTable.openid == current_identity.openid)
+        student: StudentTable = query.first()
+        if not student:
+            raise NotFound('Student not registered')
+        source: SourceStudentTable = session.query(SourceStudentTable).filter(
+            SourceStudentTable.id_card == student.id_card).first()
+        if not source:
+            raise NotFound('Source student info not found')
+        return Response(**source.to_dict()).json()
 
 
 @api.route('/qna', methods=['GET'])
