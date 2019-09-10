@@ -4,7 +4,7 @@
 import json
 from enum import Enum
 from functools import wraps
-from typing import List
+from typing import List, Union
 
 from cryptography.fernet import Fernet, InvalidToken
 # noinspection PyProtectedMember
@@ -22,15 +22,17 @@ CONFIG_DEFAULTS = {
 class Permission(Enum):
     EMPTY = 0
     ADMIN = 1
-    USER = 2
-    FACE = 3
-    NOVA_ADMIN = 4
+    STUDENT = 2
+    CANDIDATE = 3
+    FACE = 4
+    NOVA_ADMIN = 5
 
     @staticmethod
     def loads(s: str) -> 'Permission':
         d = {
             'admin': Permission.ADMIN,
-            'user': Permission.USER,
+            'student': Permission.STUDENT,
+            'candidate': Permission.CANDIDATE,
             'face': Permission.FACE,
             'nova_admin': Permission.NOVA_ADMIN,
         }
@@ -40,13 +42,11 @@ class Permission(Enum):
 class User:
     @staticmethod
     def default_roles():
-        return [Permission.USER]
+        return [Permission.STUDENT]
 
     def __init__(self, openid, roles: List[Permission] = None):
         self.openid = openid
         self.roles = roles
-        if roles is None:
-            self.roles = [Permission.USER]
 
     def dumps(self):
         return json.dumps({"openid": self.openid, "roles": [role.value for role in self.roles]})
@@ -83,7 +83,7 @@ _crypto = LocalProxy(lambda: current_app.extensions['crypto'])
 current_identity: User = LocalProxy(lambda: getattr(_request_ctx_stack.top, 'current_identity', None))
 
 
-def _token_required(role: Permission):
+def _token_required(roles: Union[Permission, List[Permission]]):
     authorization_list: List[str] = request.headers.get(current_app.config['CRYPTO_HEADER_KEY'], '').split(' ')
     if len(authorization_list) < 2:
         raise Unauthorized('Token not in request headers')
@@ -103,11 +103,15 @@ def _token_required(role: Permission):
             raise Unauthorized('Invalid Token')
         if identity is None:
             raise Unauthorized('Token in request headers empty')
-    if role not in identity.roles:
-        raise Unauthorized('Token role not matched, get {}. expect {}'.format(identity.roles, role))
+    if not isinstance(roles, list):
+        roles = [roles]
+    for role in roles:
+        if role in identity.roles:
+            return
+    raise Unauthorized('Token role not matched, get {}. expect {}'.format(identity.roles, roles))
 
 
-def token_required(role=Permission.USER):
+def token_required(role=Permission.STUDENT):
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
