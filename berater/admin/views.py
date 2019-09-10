@@ -28,7 +28,7 @@ def get_openid(code: str) -> str:
 
 @admin.route('/go/link/<string:role>')
 def go_gen_link(role):
-    return redirect(gen_redirect_url(format(request.url_root + url_for('admin.gen_link', role=role))))
+    return redirect(gen_redirect_url(format(request.url_root[:-1] + url_for('admin.gen_link', role=role))))
 
 
 @admin.route('/link/<string:role>')
