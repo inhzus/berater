@@ -61,13 +61,21 @@ class SourceStudentTable(engine.Model):
                     id_card=self.id_card, admission_id=self.admission_id)
 
 
-class NovaRegisterTable(engine.Model):
-    __tablename__ = 'nova_register_form'
-    stuid = engine.Column(engine.String(12), primary_key=True)
-    remark = engine.Column(engine.Text)
+class NovaRegTable(engine.Model):
+    __tablename__ = 'nova_reg'
+    openid = engine.Column(engine.String(30), primary_key=True)
+    qq = engine.Column(engine.String(15))
+    email = engine.Column(engine.String(64))
+    with_foundation = engine.Column(engine.Boolean())
+    reason = engine.Column(engine.Text())
+
+    def to_dict(self):
+        return dict(qq=self.qq, email=self.email,
+                    with_foundation=self.with_foundation, reason=self.reason)
 
 
 class PrivilegeTable(engine.Model):
     __tablename__ = 'privilege'
-    openid = engine.Column(engine.String(30), primary_key=True)
-    permission = engine.Column(engine.Integer(), primary_key=True)
+    id_ = engine.Column(engine.Integer(), primary_key=True, autoincrement=True)
+    openid = engine.Column(engine.String(30), index=True)
+    permission = engine.Column(engine.Integer(), index=True)
