@@ -9,9 +9,9 @@ from sqlalchemy import and_, or_
 from werkzeug.exceptions import BadRequest, Unauthorized, InternalServerError, NotFound, Conflict
 
 from berater.api.utils import get_openid_by_code, send_verify_code
-from berater.misc import Response, CandidateTable, StudentTable, SourceStudentTable, Transaction
-from berater.utils import (token_required, current_identity, get_crypto_token,
-                           MemoryCache, candidate_answer, tf_idf_client)
+from berater.misc import Response, CandidateTable, StudentTable, SourceStudentTable, Transaction, AuthUserTable
+from berater.utils import (token_required, current_identity, get_crypto_token, Permission,
+                           MemoryCache, candidate_answer, tf_idf_client, get_roles_of_openid, gen_token)
 
 api = Blueprint('api', __name__)
 
@@ -33,13 +33,26 @@ def ems_logistics():
 
 @api.route('/token', methods=['POST'])
 def get_token():
-    openid = get_openid_by_code(request.json.get('code', ''))
-    if not openid:
-        raise Unauthorized('Code invalid')
-    with Transaction() as session:
-        is_candidate = True if session.query(CandidateTable).filter(CandidateTable.openid == openid).first() else False
-        is_student = True if session.query(StudentTable).filter(StudentTable.openid == openid).first() else False
-    return Response(token=get_crypto_token(openid), candidate=is_candidate, student=is_student).json()
+    data: dict = request.json
+    roles = []
+    if 'code' in data:
+        openid = get_openid_by_code(data.get('code', ''))
+        if not openid:
+            raise Unauthorized('Code invalid')
+        roles = get_roles_of_openid(openid)
+    else:
+        openid = data.get('username', '')
+        password = data.get('password', '')
+        if not openid or not password:
+            raise BadRequest('username & password or code required')
+        with Transaction() as session:
+            user: AuthUserTable = session.query(AuthUserTable).filter(AuthUserTable.username == openid).first()
+            if user.password != password:
+                raise Unauthorized('password incorrect')
+            roles = get_roles_of_openid(openid)
+    return Response(token=gen_token(openid, roles),
+                    candidate=Permission.CANDIDATE in roles,
+                    student=Permission.STUDENT in roles).json()
 
 
 @api.route('/token', methods=['PUT'])

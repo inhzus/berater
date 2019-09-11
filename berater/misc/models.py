@@ -79,3 +79,9 @@ class PrivilegeTable(engine.Model):
     id_ = engine.Column(engine.Integer(), primary_key=True, autoincrement=True)
     openid = engine.Column(engine.String(30), index=True)
     permission = engine.Column(engine.Integer(), index=True)
+
+
+class AuthUserTable(engine.Model):
+    __tablename__ = 'auth_user'
+    username = engine.Column(engine.String(30), primary_key=True)
+    password = engine.Column(engine.String(30), nullable=False)

@@ -3,5 +3,5 @@
 
 from .models import (
     redis_client, engine, Transaction, CandidateTable, StudentTable,
-    SourceStudentTable, PrivilegeTable, NovaRegTable)
+    SourceStudentTable, PrivilegeTable, NovaRegTable, AuthUserTable)
 from .response import Response
