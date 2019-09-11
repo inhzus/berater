@@ -47,6 +47,8 @@ def get_token():
             raise BadRequest('username & password or code required')
         with Transaction() as session:
             user: AuthUserTable = session.query(AuthUserTable).filter(AuthUserTable.username == openid).first()
+            if not user:
+                raise Unauthorized('username not existed')
             if user.password != password:
                 raise Unauthorized('password incorrect')
             roles = get_roles_of_openid(openid)
