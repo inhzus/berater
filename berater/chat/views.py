@@ -37,7 +37,7 @@ def wechat_msg():
             msg[item.tag] = item.text
         if verification():
             content = 'Developing'
-            if msg['Event'] == 'CLICK':
+            if msg.get('Event', '') == 'CLICK':
                 content = '请先点击其他任一功能进行信息绑定'
                 with Transaction() as session:
                     student: StudentTable = session.query(StudentTable).filter(
