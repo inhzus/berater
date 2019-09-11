@@ -64,14 +64,14 @@ class SourceStudentTable(engine.Model):
 class NovaRegTable(engine.Model):
     __tablename__ = 'nova_reg'
     openid = engine.Column(engine.String(30), primary_key=True)
-    qq = engine.Column(engine.String(15))
-    email = engine.Column(engine.String(64))
-    with_foundation = engine.Column(engine.Boolean())
-    reason = engine.Column(engine.Text())
+    stuid = engine.Column(engine.String(16), nullable=False)
+    name = engine.Column(engine.String(16), nullable=False)
+    department = engine.Column(engine.String(32), index=True, nullable=False)
+    phone = engine.Column(engine.String(20), nullable=False)
+    qq = engine.Column(engine.String(15), nullable=False)
 
     def to_dict(self):
-        return dict(qq=self.qq, email=self.email,
-                    with_foundation=self.with_foundation, reason=self.reason)
+        return dict(stuid=self.stuid, name=self.name, department=self.department, phone=self.phone, qq=self.qq)
 
 
 class PrivilegeTable(engine.Model):
