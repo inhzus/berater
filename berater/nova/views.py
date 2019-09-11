@@ -7,7 +7,7 @@ from flask import Blueprint, request
 from werkzeug.exceptions import NotFound, Conflict, BadRequest
 
 from berater.misc import Transaction, NovaRegTable, Response, StudentTable, SourceStudentTable
-from berater.utils import token_required, current_identity
+from berater.utils import token_required, current_identity, Permission
 
 nova = Blueprint('nova', __name__)
 
@@ -70,7 +70,8 @@ def cancel_register():
 
 
 @nova.route('/admin/info', methods=['GET'])
+@token_required(Permission.NOVA_ADMIN)
 def admin_get_info():
     with Transaction() as session:
         regs: List[NovaRegTable] = session.query(NovaRegTable).all()
-        return Response(students=regs).json()
+        return Response(students=[reg.to_dict() for reg in regs]).json()
