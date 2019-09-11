@@ -7,7 +7,7 @@ from berater.utils import Permission, gen_token
 
 
 def get_roles_of_openid(openid: str) -> List[Permission]:
-    roles = [Permission.STUDENT]
+    roles = []
     with Transaction() as session:
         privileges: List[PrivilegeTable] = session.query(PrivilegeTable).filter(PrivilegeTable.openid == openid).all()
         for privilege in privileges:
