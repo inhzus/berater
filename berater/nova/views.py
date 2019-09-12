@@ -75,3 +75,32 @@ def admin_get_info():
     with Transaction() as session:
         regs: List[NovaRegTable] = session.query(NovaRegTable).all()
         return Response(students=[reg.to_dict() for reg in regs]).json()
+
+
+@nova.route('/admin/info/<string:stuid>', methods=['PUT'])
+@token_required(Permission.NOVA_ADMIN)
+def admin_put_info(stuid):
+    param_keys = [m.key for m in NovaRegTable.__table__.columns]
+    param_keys.remove('openid')
+    params = {k: request.json.get(k) for k in param_keys if k in request.json}
+    if len(param_keys) != len(params):
+        raise BadRequest('Require params: {}, only get: {}'.format(
+            ', '.join(param_keys), ', '.join(params.keys())))
+    with Transaction() as session:
+        reg: NovaRegTable = session.query(NovaRegTable).filter(NovaRegTable.stuid == stuid).first()
+        if not reg:
+            raise NotFound('student not registered')
+        for k, v in params.items():
+            setattr(reg, k, v)
+    return Response().json()
+
+
+@nova.route('/admin/info/<string:stuid>', methods=['DELETE'])
+@token_required(Permission.NOVA_ADMIN)
+def admin_delete_info(stuid):
+    with Transaction() as session:
+        reg: NovaRegTable = session.query(NovaRegTable).filter(NovaRegTable.stuid == stuid).first()
+        if not reg:
+            raise NotFound('student not registered')
+        session.delete(reg)
+    return Response().json()

@@ -64,7 +64,7 @@ class SourceStudentTable(engine.Model):
 class NovaRegTable(engine.Model):
     __tablename__ = 'nova_reg'
     openid = engine.Column(engine.String(30), primary_key=True)
-    stuid = engine.Column(engine.String(16), nullable=False)
+    stuid = engine.Column(engine.String(16), nullable=False, index=True)
     name = engine.Column(engine.String(16), nullable=False)
     department = engine.Column(engine.String(32), index=True, nullable=False)
     phone = engine.Column(engine.String(20), nullable=False)
