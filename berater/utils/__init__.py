@@ -6,4 +6,4 @@ from .cache import MemoryCache
 from .crypto import current_identity, gen_token, token_required, Crypto, Permission
 from .misc import get_crypto_token, get_roles_of_openid
 from .sms import AliSMS
-from .tf_idf import client as tf_idf_client
+from .pre_edu import client as pre_edu_client
