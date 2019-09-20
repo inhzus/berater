@@ -6,24 +6,22 @@ import jieba
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
 
-DATA_FIRST_DIR = 'data/00/'
-DATA_SECOND_DIR = 'data/01/'
-DATA_THIRD_DIR = 'data/02/'
+DATA_PREFIX = 'data/stu_man/'
+DATA_FIRST_DIR = DATA_PREFIX + '00/'
+DATA_SECOND_DIR = DATA_PREFIX + '02/'
 
 
 class TermFreqInvDocFreq:
-    """TF-IDF"""
+    return_dict = {}
 
     @staticmethod
-    def get_data():
+    def parse_file():
         data = []
         root_path = os.listdir(DATA_FIRST_DIR)
         root_path.sort(key=lambda x: int(x[:-4]))
         for filename in root_path:
-            # print(filename)
             with open(DATA_FIRST_DIR + filename, mode='r', encoding="utf-8") as f:
                 for line in f.readlines():
-                    line.replace("\n", "")
                     data.append(line)
         return data
 
@@ -50,71 +48,45 @@ class TermFreqInvDocFreq:
                     result[i] = t + weight[i][number[k]]
         res = zip(result.values(), result.keys())
         result = sorted(res)
-        # print(type(result))
-        if result:
-            pass
-        else:
-            result.append((0.00338048180234625, 0))
-
         return result
 
-    @staticmethod
-    def cut_article():
-        cut_line_flag = ["。"]
-        for filename in os.listdir(DATA_SECOND_DIR):
-            sentence_list = []
-            with open(DATA_SECOND_DIR + filename, mode='r', encoding="utf-8") as f:
-                for line in f:
-                    words = line.strip()
-                    one_sentence = ""
-                    for word in words:
-                        if word not in cut_line_flag:
-                            one_sentence = one_sentence + word
-                        else:
-                            one_sentence = one_sentence + word
-                            sentence_list.append(one_sentence.strip() + "\n")
-                            one_sentence = ""
-            f.close()
-            with open(DATA_THIRD_DIR + filename, "w", encoding="utf-8") as g:
-                g.writelines(sentence_list)
-            g.close()
-
-    @staticmethod
-    def paragraph_choose(potential_article):
+    def paragraph_choose(self, potential_article):
         data = []
         for i in range(len(potential_article)):
-            with open(DATA_THIRD_DIR + str(potential_article[i]) + ".txt", "r",
+            with open(DATA_SECOND_DIR + str(potential_article[i]) + ".txt", "r",
                       encoding="utf-8") as f:
                 for line in f:
+                    self.return_dict[line] = potential_article[i]
                     data.append(line)
-        # print(data)
         return data
 
     def ttf_idf(self, input_word):
-        # corpus = ["我 来到 北京 清华大学 清华大学 清华大学 清华大学 清华大学 清华大学 清华大学 清华大学 清华大学 清华大学 北京 北京 北京 北京 北京 北京 北京 北京 北京 北京 北京 北京"]
-        # 第一类文本切词后的结果，词之间以空格隔开
-        # "他 来到 了 网易 杭研 大厦",  # 第二类文本的切词结果
-        # "小明 硕士 毕业 与 中国 科学院",  # 第三类文本的切词结果
-        # "我 爱 北京 天安门"]  # 第四类文本的切词结果
-        data = self.get_data()
+        # corpus = ["我 来到 北京 清华大学 清华大学 清华大学 清华大学 清华大学 清华大学 清华大学 清华大学 清华大学 清华大学 北京 北京 北京 北京 北京 北京 北京 北京 北京 北京 北京 北京",
+        # 第一类文本切词后的结果，词之间以空格隔开 "他 来到 了 网易 杭研 大厦",  # 第二类文本的切词结果 "小明 硕士 毕业 与 中国 科学院",  # 第三类文本的切词结果 "我 爱 北京 天安门"]  #
+        # 第四类文本的切词结果
+        data = self.parse_file()
         vector_maker = CountVectorizer()  # 该类会将文本中的词语转换为词频矩阵，矩阵元素a[i][j] 表示j词在i类文本下的词频
         transformer = TfidfTransformer(smooth_idf=False)  # 该类会统计每个词语的tf-idf权值
-        matrix = transformer.fit_transform(
+        tf_idf = transformer.fit_transform(
             vector_maker.fit_transform(data))  # 第一个fit_transform是计算tf-idf，第二个fit_transform是将文本转为词频矩阵
         word = vector_maker.get_feature_names()  # 获取词袋模型中的所有词语
         bag_word = self.list_to_dict(word)
-        weight = matrix.toarray()  # 将tf-idf矩阵抽取出来，元素a[i][j]表示j词在i类文本中的tf-idf权重
+        weight = tf_idf.toarray()  # 将tf-idf矩阵抽取出来，元素a[i][j]表示j词在i类文本中的tf-idf权重
+        # for i in range(len(weight)):  # 打印每类文本的tf-idf词语权重，第一个for遍历所有文本，第二个for便利某一类文本下的词语权重
+        #     print(u"-------这里输出第", i, u"类文本的词语tf-idf权重------")
+        # for j in range(len(word)):
+        #     print(word[j], weight[18][j])
         result_article = self.out_result(bag_word, weight, input_word)
+        # print(result_article)
         rr = result_article[::-1]
-
         potential_article = []
-        for i in range(1):
+        for i in range(5):
             potential_article.append(rr[i][1])
         data = self.paragraph_choose(potential_article)
         return data
 
     @staticmethod
-    def longest_common_sub_seq(ss1, ss2):
+    def lcs(ss1, ss2):
         s1 = ss1
         s2 = ss2
         total = 100000
@@ -174,7 +146,7 @@ class TermFreqInvDocFreq:
 
     @staticmethod
     def cut(x):
-        return ' '.join([item for item in jieba.cut(x)])
+        return ' '.join([a for a in jieba.cut(x)])
 
     @staticmethod
     def cut2(x):
@@ -184,8 +156,8 @@ class TermFreqInvDocFreq:
         return data
 
     @staticmethod
-    def f(doc, query):
-        common = set([x for x in query if x in doc])
+    def f(doc, que):
+        common = set([x for x in que if x in doc])
         total = len(common)
         if total == 0:
             return [0, 0]
@@ -197,11 +169,12 @@ class TermFreqInvDocFreq:
                         flag = 0
                         break
                 if flag:
-                    return [total / i, total / len(query)]
+                    return [total / i, total / len(que)]
 
-    def find_all(self, query):
-        que_cut = self.cut(query)
-        que2 = self.cut2(query)
+    def t_findall(self, que):
+        # que = '交换的课程认定'  # '大二学天毕业论怎文的有多少人'#'教务处各科室的人要干嘛'#'胡金波觉得课程怎么样'
+        que_cut = self.cut(que)
+        que2 = self.cut2(que)
         text = self.ttf_idf(que2)
         text_cut = [x for x in map(self.cut, text)]
 
@@ -211,10 +184,7 @@ class TermFreqInvDocFreq:
         tt = t.fit_transform(vv[1:])
         qq = vv[0]
         r = tt.dot(qq.T)
-        if r.max() == 0:
-            pass
-        else:
-            r = r / r.max()
+        r = r / r.max()
 
         alpha = 1 / 8
         beta = 1
@@ -227,15 +197,58 @@ class TermFreqInvDocFreq:
 
         res = sorted(res, key=lambda x: lambda_ * x[2] + (1 - lambda_) * (x[1][0] ** alpha) * (x[1][1] ** beta),
                      reverse=True)
-        ret = []
-        for i in range(2):
-            ret.append(text[res[i][0]].strip())
-        return ret
+        # print(res)
+        last_count = 0
+        last_result = ""
+        for i in range(len(res)):
+            last_result = last_result + text[res[i][0]]
+            # print(text[res[i][0]])
+            last_count += 1
+            # if (lambda_ * x[2] + (1 - lambda_) * (x[1][0] ** alpha) * (x[1][1] ** beta)) <= 0.45:
+            #    break
+            if last_count >= 8:
+                break
+        return last_result
+        # print([lambda_ * x[2] + (1 - lambda_) * (x[1][0] ** alpha) * (x[1][1] ** beta) for x in res])
+
+    def findall(self, que):
+        # que = '交换的课程认定'  # '大二学天毕业论怎文的有多少人'#'教务处各科室的人要干嘛'#'胡金波觉得课程怎么样'
+        que_cut = self.cut(que)
+        que2 = self.cut2(que)
+        text = self.ttf_idf(que2)
+        text_cut = [x for x in map(self.cut, text)]
+
+        v = CountVectorizer()
+        t = TfidfTransformer()
+        vv = v.fit_transform([que_cut] + text_cut)
+        tt = t.fit_transform(vv[1:])
+        qq = vv[0]
+        r = tt.dot(qq.T)
+        r = r / r.max()
+
+        alpha = 1 / 8
+        beta = 1
+        lambda_ = 0.4
+
+        res = []
+        for i in range(len(text_cut)):
+            res += [[i, self.f(text_cut[i], que_cut), r[i, 0]]]
+            # res+=[[i,f(text[i],que)]]
+
+        res = sorted(res, key=lambda x: lambda_ * x[2] + (1 - lambda_) * (x[1][0] ** alpha) * (x[1][1] ** beta),
+                     reverse=True)
+        # print(res)
+        last_count = 0
+        last_result = {}
+        for i in range(len(res)):
+            last_result[text[res[i][0]]] = self.return_dict[text[res[i][0]]]
+            # print(text[res[i][0]])
+            last_count += 1
+            if last_count >= 10:
+                break
+        return last_result
 
 
-client = TermFreqInvDocFreq()
-
-if __name__ == "__main__":
-    a = TermFreqInvDocFreq()
-    que = '以下哪项国际交流奖学金为我校2017年度设立，专门面向家庭经济困难学生'  # 输入的问题
-    print(a.find_all(que))
+if __name__ == '__main__':
+    c = TermFreqInvDocFreq()
+    print(c.findall('交换生的课程认定'))
