@@ -85,29 +85,34 @@ class TemplateFormat(object):
     """
     模板消息的格式化数据，必须按照严格json 格式和format 格式化要求
     """
-    bind = '''
+
+    register = '''
     {{
         "touser": "{touser}",
-        "template_id": "4NjKBy5S6e5QzpymZHBMJTiJXAtnvo6dtlOGD-Lo97A",
+        "template_id": "MxRIKUqWhANpXOAKdZp9d3_fv6WFOuOYaZGdKSLtCzU",
         "topcolor": "#FF0000",
         "data": {{
             "first": {{
-                "value": "您已成功绑定。",
+                "value": "您好，报名操作成功。",
                 "color": "#173177"
             }},
             "keyword1": {{
-                "value": "{account}",
+                "value": "NOVA 智能决策工作室",
                 "color": "#173177"
             }},
             "keyword2": {{
+                "value": "{name}",
+                "color": "#173177"
+            }},
+            "keyword3": {{
                 "value": "{time}",
                 "color": "#173177"
             }},
             "remark": {{
-                "value": "绑定成功，您可进行下一步操作。",
+                "value": "感谢您的参与。",
                 "color": "#173177"
             }}
         }}
     }}
     '''
-
+    '''format: touser, name, time'''

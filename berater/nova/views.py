@@ -8,6 +8,7 @@ from werkzeug.exceptions import NotFound, Conflict, BadRequest
 
 from berater.misc import Transaction, NovaRegTable, Response, StudentTable, SourceStudentTable
 from berater.utils import token_required, current_identity, Permission
+from .utils import send_register_msg
 
 nova = Blueprint('nova', __name__)
 
@@ -53,6 +54,7 @@ def post_info():
         if session.query(NovaRegTable).filter(NovaRegTable.openid == current_identity.openid).first():
             raise Conflict('student registered before')
         session.add(reg)
+    send_register_msg(reg.name)
     return Response().json()
 
 
