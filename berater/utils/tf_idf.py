@@ -6,7 +6,7 @@ import jieba
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
 
-DATA_PREFIX = 'data/stu_man/'
+DATA_PREFIX = 'data/'
 DATA_FIRST_DIR = DATA_PREFIX + '00/'
 DATA_SECOND_DIR = DATA_PREFIX + '02/'
 
@@ -18,11 +18,19 @@ class TermFreqInvDocFreq:
     def parse_file():
         data = []
         root_path = os.listdir(DATA_FIRST_DIR)
-        root_path.sort(key=lambda x: int(x[:-4]))
-        for filename in root_path:
-            with open(DATA_FIRST_DIR + filename, mode='r', encoding="utf-8") as f:
-                for line in f.readlines():
-                    data.append(line)
+        root_path.sort(key=lambda x: int(x[:2]))
+        for root_name in root_path:
+            chapter_names = os.listdir(DATA_FIRST_DIR + root_name)
+            chapter_names.sort(key=lambda x: int(x[:2]))
+            for chapter_name in chapter_names:
+                filenames = os.listdir(DATA_FIRST_DIR + root_name + '/' + chapter_name)
+                lines = ""
+                for filename in filenames:
+                    with open(DATA_FIRST_DIR + root_name + '/' + chapter_name + '/' + filename, mode='r',
+                              encoding="utf-8") as f:
+                        for line in f.readlines():
+                            lines = lines + line
+                data.append(lines)
         return data
 
     @staticmethod
@@ -53,11 +61,28 @@ class TermFreqInvDocFreq:
     def paragraph_choose(self, potential_article):
         data = []
         for i in range(len(potential_article)):
-            with open(DATA_SECOND_DIR + str(potential_article[i]) + ".txt", "r",
-                      encoding="utf-8") as f:
-                for line in f:
-                    self.return_dict[line] = potential_article[i]
-                    data.append(line)
+            root_path = os.listdir(DATA_SECOND_DIR)
+            root_path.sort(key=lambda x: int(x[:2]))
+            for root_name in root_path:
+                if int(root_name[:2]) > potential_article[i]:
+                    break
+                else:
+                    potential_article_count = int(root_name[:2])
+                    chapter_names = os.listdir(DATA_SECOND_DIR + '/' + root_name)
+                    chapter_names.sort(key=lambda x: int(x[:2]))
+                    for chapter_name in chapter_names:
+                        if potential_article_count < potential_article[i]:
+                            potential_article_count += 1
+                            continue
+                        else:
+                            filenames = os.listdir(DATA_SECOND_DIR + '/' + root_name + '/' + chapter_name)
+                            for filename in filenames:
+                                with open(DATA_SECOND_DIR + root_name + '/' + chapter_name + '/' + filename, "r",
+                                          encoding="utf-8") as f:
+                                    for line in f:
+                                        self.return_dict[line] = [root_name[2:], chapter_name[2:], filename[:-4]]
+                                        data.append(line)
+                            break
         return data
 
     def ttf_idf(self, input_word):
@@ -211,7 +236,7 @@ class TermFreqInvDocFreq:
         return last_result
         # print([lambda_ * x[2] + (1 - lambda_) * (x[1][0] ** alpha) * (x[1][1] ** beta) for x in res])
 
-    def findall(self, que):
+    def find_all(self, que):
         # que = '交换的课程认定'  # '大二学天毕业论怎文的有多少人'#'教务处各科室的人要干嘛'#'胡金波觉得课程怎么样'
         que_cut = self.cut(que)
         que2 = self.cut2(que)
@@ -244,11 +269,14 @@ class TermFreqInvDocFreq:
             last_result[text[res[i][0]]] = self.return_dict[text[res[i][0]]]
             # print(text[res[i][0]])
             last_count += 1
-            if last_count >= 10:
+            if last_count >= 3:
                 break
         return last_result
 
 
+client = TermFreqInvDocFreq()
+
+
 if __name__ == '__main__':
     c = TermFreqInvDocFreq()
-    print(c.findall('交换生的课程认定'))
+    print(c.find_all('交换生的课程认定'))
