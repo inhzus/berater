@@ -11,7 +11,7 @@ from werkzeug.exceptions import BadRequest, Unauthorized, InternalServerError, N
 from berater.api.utils import get_openid_by_code, send_verify_code
 from berater.misc import Response, CandidateTable, StudentTable, SourceStudentTable, Transaction, AuthUserTable
 from berater.utils import (token_required, current_identity, get_crypto_token, Permission,
-                           MemoryCache, candidate_answer, tf_idf_client, get_roles_of_openid, gen_token)
+                           MemoryCache, candidate_answer, pre_edu_client, get_roles_of_openid, gen_token)
 
 api = Blueprint('api', __name__)
 
@@ -215,7 +215,7 @@ def qna():
     q = request.args.get('q', '')
     if not q:
         raise BadRequest('Request arg "q" missing')
-    answer = '\n\n'.join(tf_idf_client.find_all(q))
+    answer = '\n\n'.join(pre_edu_client.find_all(q))
     return Response(answer=answer).json()
 
 
