@@ -100,5 +100,5 @@ def admin_delete_info(stuid):
         reg: NovaRegTable = session.query(NovaRegTable).filter(NovaRegTable.stuid == stuid).first()
         if not reg:
             raise NotFound('student not registered')
-        session.delete(reg)
+        reg.delete = True
     return Response().json()
