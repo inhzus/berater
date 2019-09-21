@@ -28,7 +28,7 @@ def get_source():
         qq = ''
         reg: NovaRegTable = session.query(NovaRegTable).filter(
             NovaRegTable.openid == current_identity.openid
-        )
+        ).first()
         if reg:
             phone = reg.phone
             qq = reg.qq
