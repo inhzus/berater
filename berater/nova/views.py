@@ -25,7 +25,14 @@ def get_source():
             SourceStudentTable.id_card == student.id_card
         ).first()
         assert source is not None
-        return Response(stuid=source.stuid, name=source.name, department=source.department, phone=phone).json()
+        qq = ''
+        reg: NovaRegTable = session.query(NovaRegTable).filter(
+            NovaRegTable.openid == current_identity.openid
+        )
+        if reg:
+            phone = reg.phone
+            qq = reg.qq
+        return Response(stuid=source.stuid, name=source.name, department=source.department, phone=phone, qq=qq).json()
 
 
 @nova.route('/info', methods=['GET'])
@@ -49,11 +56,17 @@ def post_info():
     if len(param_keys) != len(params):
         raise BadRequest('Require params: {}, only get: {}'.format(
             ', '.join(param_keys), ', '.join(params.keys())))
-    reg: NovaRegTable = NovaRegTable(openid=current_identity.openid, **params)
     with Transaction() as session:
-        if session.query(NovaRegTable).filter(NovaRegTable.openid == current_identity.openid).first():
-            raise Conflict('student registered before')
-        session.add(reg)
+        reg: NovaRegTable = session.query(NovaRegTable).filter(NovaRegTable.openid == current_identity.openid).first()
+        if reg:
+            if not reg.delete:
+                raise Conflict('student registered before')
+            reg.delete = False
+            for k, v in params:
+                setattr(reg, k, v)
+        else:
+            reg: NovaRegTable = NovaRegTable(openid=current_identity.openid, **params, delete=False)
+            session.add(reg)
     send_register_msg(reg.name)
     return Response().json()
 
@@ -77,24 +90,6 @@ def admin_get_info():
     with Transaction() as session:
         regs: List[NovaRegTable] = session.query(NovaRegTable).all()
         return Response(students=[reg.to_dict() for reg in regs]).json()
-
-
-@nova.route('/admin/info/<string:stuid>', methods=['PUT'])
-@token_required(Permission.NOVA_ADMIN)
-def admin_put_info(stuid):
-    param_keys = [m.key for m in NovaRegTable.__table__.columns]
-    param_keys.remove('openid')
-    params = {k: request.json.get(k) for k in param_keys if k in request.json}
-    if len(param_keys) != len(params):
-        raise BadRequest('Require params: {}, only get: {}'.format(
-            ', '.join(param_keys), ', '.join(params.keys())))
-    with Transaction() as session:
-        reg: NovaRegTable = session.query(NovaRegTable).filter(NovaRegTable.stuid == stuid).first()
-        if not reg:
-            raise NotFound('student not registered')
-        for k, v in params.items():
-            setattr(reg, k, v)
-    return Response().json()
 
 
 @nova.route('/admin/info/<string:stuid>', methods=['DELETE'])

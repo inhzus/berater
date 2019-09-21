@@ -69,6 +69,7 @@ class NovaRegTable(engine.Model):
     department = engine.Column(engine.String(32), index=True, nullable=False)
     phone = engine.Column(engine.String(20), nullable=False)
     qq = engine.Column(engine.String(15), nullable=False)
+    delete = engine.Column(engine.Boolean(), default=False)
 
     def to_dict(self):
         return dict(stuid=self.stuid, name=self.name, department=self.department, phone=self.phone, qq=self.qq)
