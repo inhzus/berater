@@ -52,6 +52,7 @@ def get_info():
 def post_info():
     param_keys = [m.key for m in NovaRegTable.__table__.columns]
     param_keys.remove('openid')
+    param_keys.remove('delete')
     params = {k: request.json.get(k) for k in param_keys if k in request.json}
     if len(param_keys) != len(params):
         raise BadRequest('Require params: {}, only get: {}'.format(
