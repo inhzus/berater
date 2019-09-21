@@ -81,7 +81,7 @@ def cancel_register():
         ).first()
         if not reg:
             raise NotFound('student not registered')
-        session.delete(reg)
+        reg.delete = True
         return Response().json()
 
 
@@ -90,7 +90,7 @@ def cancel_register():
 def admin_get_info():
     with Transaction() as session:
         regs: List[NovaRegTable] = session.query(NovaRegTable).all()
-        return Response(students=[reg.to_dict() for reg in regs]).json()
+        return Response(students=[reg.to_dict() for reg in regs if not reg.delete]).json()
 
 
 @nova.route('/admin/info/<string:stuid>', methods=['DELETE'])
