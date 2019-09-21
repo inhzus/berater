@@ -104,6 +104,8 @@ def _token_required(roles: Union[Permission, List[Permission]]):
         if identity is None:
             raise Unauthorized('Token in request headers empty')
     if not isinstance(roles, list):
+        if roles == Permission.EMPTY:
+            return
         roles = [roles]
     for role in roles:
         if role in identity.roles:
