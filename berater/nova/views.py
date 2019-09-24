@@ -8,7 +8,7 @@ from werkzeug.exceptions import NotFound, Conflict, BadRequest
 
 from berater.misc import Transaction, NovaRegTable, Response, StudentTable, SourceStudentTable
 from berater.utils import token_required, current_identity, Permission
-from .utils import send_register_msg
+from .utils import send_register_msg, send_unregister_msg
 
 nova = Blueprint('nova', __name__)
 
@@ -82,6 +82,7 @@ def cancel_register():
         if not reg:
             raise NotFound('student not registered')
         reg.delete = True
+        send_unregister_msg(reg.name)
         return Response().json()
 
 

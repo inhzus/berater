@@ -116,3 +116,34 @@ class TemplateFormat(object):
     }}
     '''
     '''format: touser, name, time'''
+
+    unregister = '''
+    {{
+        "touser": "{touser}",
+        "template_id": "YkO-jmcfMTFygvuM7DQ6AT4S5UH0XjkvLpxbz5i08Xc",
+        "topcolor": "#FF0000",
+        "data": {{
+            "first": {{
+                "value": "您好，取消报名操作成功。",
+                "color": "#173177"
+            }},
+            "keyword1": {{
+                "value": "NOVA 智能决策工作室",
+                "color": "#173177"
+            }},
+            "keyword2": {{
+                "value": "{name}",
+                "color": "#173177"
+            }},
+            "keyword3": {{
+                "value": "{time}",
+                "color": "#173177"
+            }},
+            "remark": {{
+                "value": "感谢您的参与。",
+                "color": "#173177"
+            }}
+        }}
+    }}
+    '''
+    '''format: touser, name, time'''
