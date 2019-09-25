@@ -3,6 +3,7 @@
 
 import logging
 import os
+import sys
 from json import JSONEncoder
 from logging.handlers import TimedRotatingFileHandler
 
@@ -13,7 +14,9 @@ from berater.misc import engine
 from berater.utils import Crypto
 
 
+# noinspection SpellCheckingInspection
 def create_app(config_name='dev'):
+    # noinspection PyShadowingNames
     app = Flask(__name__)
 
     # configure app
@@ -21,22 +24,44 @@ def create_app(config_name='dev'):
     config[config_name].init_app(app)
     config[0] = config[config_name]
 
+    if not os.path.exists('log'):
+        os.mkdir('log')
+
+    # noinspection SpellCheckingInspection
+    class PackagePathFilter(logging.Filter):
+        def filter(self, record):
+            pathname = record.pathname
+            record.relative_path = None
+            abs_sys_paths = map(os.path.abspath, sys.path)
+            # noinspection PyTypeChecker
+            for path in sorted(abs_sys_paths, key=len, reverse=True):  # longer paths first
+                if not path.endswith(os.sep):
+                    path += os.sep
+                if pathname.startswith(path):
+                    record.relative_path = os.path.relpath(pathname, path)
+                    break
+            if record.relative_path.endswith('.py'):
+                record.relative_path = record.relative_path[:-3]
+            record.relative_path = record.relative_path.replace('/', '.')
+            return True
+
+    handler = TimedRotatingFileHandler(
+        'log/berater.log', delay=False, encoding='utf-8', interval=1, utc=True, when='D')
+    handler.addFilter(PackagePathFilter())
+    handler.setLevel(logging.DEBUG)
+    handler.setFormatter(
+        logging.Formatter('[%(asctime)s] %(levelname)s %(relative_path)s:%(lineno)s %(message)s'))
+    # logging.getLogger('gunicorn.error').addHandler(handler)
+    # logging.getLogger('werkzeug').addHandler(handler)
+    logging.getLogger('sqlalchemy').addHandler(handler)
+    app.logger.addHandler(handler)
+    app.logger.setLevel(logging.DEBUG)
+
     crypto = Crypto(app)
     crypto.init_app(app)
 
     engine.init_app(app)
     engine.create_all(app=app)
-
-    if not os.path.exists('log'):
-        os.mkdir('log')
-    handler = TimedRotatingFileHandler(
-        'log/berater.log', delay=False, encoding='utf-8', interval=1, utc=True, when='D')
-    handler.setLevel(logging.DEBUG)
-    handler.setFormatter(logging.Formatter('[%(asctime)s] %(levelname)s in %(module)s: %(message)s'))
-    logging.getLogger('werkzeug').addHandler(handler)
-    logging.getLogger('sqlalchemy').addHandler(handler)
-    app.logger.addHandler(handler)
-    app.logger.setLevel(logging.DEBUG)
 
     # Json encoder set ensure ASCII false
     class NonASCIIEncoder(JSONEncoder):
