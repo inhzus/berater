@@ -27,7 +27,6 @@ def create_app(config_name='dev'):
     if not os.path.exists('log'):
         os.mkdir('log')
 
-    # noinspection SpellCheckingInspection
     class PackagePathFilter(logging.Filter):
         def filter(self, record):
             pathname = record.pathname

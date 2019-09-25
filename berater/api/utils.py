@@ -3,6 +3,8 @@
 
 from typing import Tuple
 
+from flask import current_app
+
 # from berater.config import API_KEY, API_SECRET
 from berater.config import config
 from berater.utils import wechat_sdk, AliSMS
@@ -15,6 +17,7 @@ def send_verify_code(phone_number: str, verify_code: str) -> Tuple[bool, str]:
         'code': verify_code
     }
     ret = _sms.send(phone_number, config[0].SMS_TEMPLATE_CODE, params).json()
+    current_app.logger.info('[sms] verify code sent to {}, return {}'.format(verify_code, phone_number, ret))
     status = 'Code' in ret and ret['Code'] == 'OK'
     return status, '' if status else ret['Message']
 

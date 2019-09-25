@@ -224,6 +224,7 @@ def qna():
                 answer += '\n\n'
             answer += '{} {} {}页\n{}'.format(*v, k)
     except IndexError:
+        current_app.logger.info('[qna] no correspond answer to {}'.format(q))
         answer = '抱歉，您的问题暂时无法解答呢。(つд⊂)'
     return Response(answer=answer).json()
 

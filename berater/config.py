@@ -61,7 +61,7 @@ class ProductionConfig(BaseConfig):
     SERVER_URL = 'http://weixin.njunova.com'
     # noinspection SpellCheckingInspection
     CRYPTO_KEY = getenv('CRYPTO_KEY')
-    SQLALCHEMY_ECHO = True
+    SQLALCHEMY_ECHO = False
 
 
 config = {
