@@ -34,6 +34,7 @@ services:
       - "127.0.0.1:5000:5000"
     volumes:
       - "./conf/supervisord.conf:/etc/supervisor/supervisord.conf"
+      - "./log:/log"
     links:
       - mysql
     depends_on:

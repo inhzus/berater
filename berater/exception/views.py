@@ -25,7 +25,7 @@ def handle_exceptions(err: Exception):
 @error.after_app_request
 def after_request(response: 'Response'):
     current_app.logger.info('{} {} "{}" Auth: "{}" "{}"'.format(
-        request.method, request.path, request.headers.get('User-Agent'),
+        request.method, request.full_path, request.headers.get('User-Agent'),
         request.headers.get('Authorization', ''), request.json if request.json else ''))
     current_app.logger.info('{} Return: {}'.format(response.status, response.data.decode('utf-8')))
     return response
