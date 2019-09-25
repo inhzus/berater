@@ -13,5 +13,5 @@ COPY ./conf/wait-for-it.sh /wait-for-it.sh
 RUN chmod +x /wait-for-it.sh
 
 ENV FLASK_APP=/berater/app.py
-ENV FLASK_ENV=development
+ENV FLASK_ENV=production
 
