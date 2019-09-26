@@ -8,8 +8,7 @@ from xml.etree import ElementTree
 import requests as rq
 from flask import Blueprint, request, make_response, current_app
 
-from berater.misc import Response, Transaction, StudentTable, SourceStudentTable
-from berater.utils import current_identity
+from berater.misc import Response
 from berater.utils.wechat_sdk import MsgFormat
 
 chat = Blueprint('chat', __name__)
@@ -50,7 +49,8 @@ def wechat_msg():
             #                 content = '学号: {}'.format(source_student.stuid)
             if msg.get('MsgType', '') == 'voice':
                 recognition = msg.get('Recognition', '')
-                current_app.logger.info('[voice] {}'.format(recognition))
+                if recognition:
+                    content = '语音识别：{}'.format(recognition)
             reply = MsgFormat.text % (msg['FromUserName'], msg['ToUserName'], str(time()), content)
             response = make_response(reply)
             response.content_type = 'application/xml'
