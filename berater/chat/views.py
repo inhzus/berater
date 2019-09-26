@@ -36,18 +36,21 @@ def wechat_msg():
         for item in ElementTree.fromstring(data):
             msg[item.tag] = item.text
         if verification():
-            content = 'Developing'
-            if msg.get('Event', '') == 'CLICK':
-                content = '请先点击其他任一功能进行信息绑定'
-                with Transaction() as session:
-                    student: StudentTable = session.query(StudentTable).filter(
-                        StudentTable.openid == msg['FromUserName']).first()
-                    if student:
-                        source_student: SourceStudentTable = session.query(
-                            SourceStudentTable.stuid, SourceStudentTable.admission_id
-                        ).filter(SourceStudentTable.id_card == student.id_card).first()
-                        if source_student:
-                            content = '学号: {}'.format(source_student.stuid)
+            content = '聊天功能尚未开放，如需查询相关信息，请点击菜单中“学生手册”项。'
+            # if msg.get('Event', '') == 'CLICK':
+            #     content = '请先点击其他任一功能进行信息绑定'
+            #     with Transaction() as session:
+            #         student: StudentTable = session.query(StudentTable).filter(
+            #             StudentTable.openid == msg['FromUserName']).first()
+            #         if student:
+            #             source_student: SourceStudentTable = session.query(
+            #                 SourceStudentTable.stuid, SourceStudentTable.admission_id
+            #             ).filter(SourceStudentTable.id_card == student.id_card).first()
+            #             if source_student:
+            #                 content = '学号: {}'.format(source_student.stuid)
+            if msg.get('MsgType', '') == 'voice':
+                recognition = msg.get('Recognition', '')
+                current_app.logger.info('[voice] {}'.format(recognition))
             reply = MsgFormat.text % (msg['FromUserName'], msg['ToUserName'], str(time()), content)
             response = make_response(reply)
             response.content_type = 'application/xml'
