@@ -35,9 +35,9 @@ def wechat_msg():
         for item in ElementTree.fromstring(data):
             msg[item.tag] = item.text
         if verification():
-            content = '聊天功能尚未开放，如需查询相关信息，请点击菜单中“学生手册”项。'
+            reply_content = '聊天功能尚未开放，如需查询相关信息，请点击菜单中“学生手册”项。'
             # if msg.get('Event', '') == 'CLICK':
-            #     content = '请先点击其他任一功能进行信息绑定'
+            #     reply_content = '请先点击其他任一功能进行信息绑定'
             #     with Transaction() as session:
             #         student: StudentTable = session.query(StudentTable).filter(
             #             StudentTable.openid == msg['FromUserName']).first()
@@ -46,12 +46,15 @@ def wechat_msg():
             #                 SourceStudentTable.stuid, SourceStudentTable.admission_id
             #             ).filter(SourceStudentTable.id_card == student.id_card).first()
             #             if source_student:
-            #                 content = '学号: {}'.format(source_student.stuid)
+            #                 reply_content = '学号: {}'.format(source_student.stuid)
+            content = msg.get('Content', '')
             if msg.get('MsgType', '') == 'voice':
-                recognition = msg.get('Recognition', '')
-                if recognition:
-                    content = '语音识别：{}'.format(recognition)
-            reply = MsgFormat.text % (msg['FromUserName'], msg['ToUserName'], str(time()), content)
+                content = msg.get('Recognition', '')
+                if content:
+                    reply_content = '语音识别：{}'.format(content)
+            current_app.logger.info('chat: {} {} "{}" -> {}'.format(
+                msg.get('MsgType', ''), msg['FromUserName'], content, reply_content))
+            reply = MsgFormat.text % (msg['FromUserName'], msg['ToUserName'], str(time()), reply_content)
             response = make_response(reply)
             response.content_type = 'application/xml'
             return response
