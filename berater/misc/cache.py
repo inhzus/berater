@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # created by inhzus
 
-from berater.misc import redis_client
+from .models import redis_client
 
 
 class MemoryCache(object):

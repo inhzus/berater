@@ -17,7 +17,7 @@ services:
     volumes:
       - "datavolume:/var/lib/mysql"
     env_file:
-     - .env
+      - .env
     expose:
       - "3306"
     ports:
@@ -33,7 +33,7 @@ services:
     ports:
       - "127.0.0.1:5000:5000"
     volumes:
-      - "./conf/supervisord.conf:/etc/supervisor/supervisord.conf"
+      - "./conf/berater-supervisord.conf:/etc/supervisor/supervisord.conf"
       - "./log:/log"
     links:
       - mysql
@@ -41,13 +41,26 @@ services:
       - mysql
       - redis
 
+  celery:
+    container_name: berater_celery
+    build: .
+    command: bash -c "/wait-for-it.sh redis:6379 -- supervisord"
+    env_file:
+      - .env
+    ports:
+      - "127.0.0.1:5555:5555"
+    volumes:
+      - "./conf/celery-supervisord.conf:/etc/supervisor/supervisord.conf"
+    depends_on:
+      - redis
+
   wx-auth:
     container_name: berater_wx_auth
-#    image: registry.cn-shenzhen.aliyuncs.com/inhzus/wx-auth:latest
+    #    image: registry.cn-shenzhen.aliyuncs.com/inhzus/wx-auth:latest
     image: auth:latest
     ports:
       - "127.0.0.1:8001:80"
       - "127.0.0.1:8002:443"
 
 volumes:
-  datavolume: 
+  datavolume:

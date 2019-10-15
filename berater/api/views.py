@@ -2,17 +2,18 @@
 # created by inhzus
 
 import random
+from typing import Dict, List
 
 import requests as rq
 from flask import Blueprint, request, current_app
 from sqlalchemy import and_, or_
-from typing import Dict, List
 from werkzeug.exceptions import BadRequest, Unauthorized, InternalServerError, NotFound, Conflict
 
 from berater.api.utils import get_openid_by_code, send_verify_code
-from berater.misc import Response, CandidateTable, StudentTable, SourceStudentTable, Transaction, AuthUserTable
+from berater.misc import (CandidateTable, StudentTable, SourceStudentTable, Transaction, AuthUserTable,
+                          Response, MemoryCache)
 from berater.utils import (token_required, current_identity, get_crypto_token, Permission,
-                           MemoryCache, candidate_answer, tf_idf_client, get_roles_of_openid, gen_token)
+                           candidate_answer, tf_idf_client, get_roles_of_openid, gen_token)
 
 api = Blueprint('api', __name__)
 

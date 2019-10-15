@@ -3,12 +3,16 @@
 
 import json
 
-from berater.config import config, MENU
-from berater.utils.wechat_sdk import AccessToken, Url, Communicate
+from redis import Redis
+
+from berater.config import MENU
+from berater.misc import MemoryCache
+from berater.utils.wechat_sdk import Url, Communicate
 
 
 def create_menu():
-    token = AccessToken.get(config[0].API_KEY, config[0].API_SECRET)
+    cli = Redis(port=63790)
+    token = cli.get(MemoryCache.concat_keys('', 'access_token'))
     if token:
         url = Url.create_menu.format(access_token=token)
         data = json.dumps(MENU, ensure_ascii=False).encode('utf-8')
