@@ -5,6 +5,8 @@ services:
   redis:
     image: redis
     container_name: berater_redis
+    volumes:
+      - "redis-data:/data"
     expose:
       - 6379
     ports:
@@ -64,3 +66,4 @@ services:
 
 volumes:
   datavolume:
+  redis-data:
