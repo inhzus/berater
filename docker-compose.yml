@@ -36,7 +36,7 @@ services:
       - "127.0.0.1:5000:5000"
     volumes:
       - "./conf/berater-supervisord.conf:/etc/supervisor/supervisord.conf"
-      - "./log:/log"
+      - "/var/log/berater:/log"
     links:
       - mysql
     depends_on:
@@ -53,6 +53,7 @@ services:
       - "127.0.0.1:5555:5555"
     volumes:
       - "./conf/celery-supervisord.conf:/etc/supervisor/supervisord.conf"
+      - "/var/log/celery:/log"
     depends_on:
       - redis
 

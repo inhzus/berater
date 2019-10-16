@@ -2,16 +2,13 @@
 # created by inhzus
 
 import logging
-import os
-import sys
 from json import JSONEncoder
-from logging.handlers import TimedRotatingFileHandler, RotatingFileHandler
 
 from flask import Flask
 
 from berater.config import config
 from berater.misc import engine
-from berater.utils import Crypto
+from berater.utils import Crypto, get_file_log_handler
 
 
 # noinspection SpellCheckingInspection
@@ -24,32 +21,7 @@ def create_app(config_name='dev'):
     config[config_name].init_app(app)
     config[0] = config[config_name]
 
-    # if not os.path.exists('log'):
-    #     os.mkdir('log')
-
-    class PackagePathFilter(logging.Filter):
-        def filter(self, record):
-            pathname = record.pathname
-            record.relative_path = None
-            abs_sys_paths = map(os.path.abspath, sys.path)
-            # noinspection PyTypeChecker
-            for path in sorted(abs_sys_paths, key=len, reverse=True):  # longer paths first
-                if not path.endswith(os.sep):
-                    path += os.sep
-                if pathname.startswith(path):
-                    record.relative_path = os.path.relpath(pathname, path)
-                    break
-            if record.relative_path.endswith('.py'):
-                record.relative_path = record.relative_path[:-3]
-            record.relative_path = record.relative_path.replace('/', '.')
-            return True
-
-    handler = TimedRotatingFileHandler(
-        'log/berater.log', delay=False, encoding='utf-8', interval=1, utc=True, when='D')
-    handler.addFilter(PackagePathFilter())
-    handler.setLevel(logging.DEBUG)
-    handler.setFormatter(
-        logging.Formatter('[%(asctime)s] %(levelname)s %(relative_path)s:%(lineno)s %(message)s'))
+    handler = get_file_log_handler('log/berater.log')
     # logging.getLogger('gunicorn.error').addHandler(handler)
     # logging.getLogger('werkzeug').addHandler(handler)
     logging.getLogger('sqlalchemy').addHandler(handler)
