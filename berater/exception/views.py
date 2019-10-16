@@ -3,7 +3,7 @@
 
 from traceback import extract_tb, StackSummary
 
-from flask import Blueprint, jsonify, current_app, request
+from flask import Blueprint, jsonify, current_app, request, Response
 from werkzeug.exceptions import *
 
 error = Blueprint('errors', __name__)
@@ -23,7 +23,7 @@ def handle_exceptions(err: Exception):
 
 
 @error.after_app_request
-def after_request(response: 'Response'):
+def after_request(response: Response):
     current_app.logger.info('{} {} Auth: "{}" {}'.format(
         request.method, request.full_path,
         request.headers.get('Authorization', ''), repr(request.data.decode('utf-8'))))

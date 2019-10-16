@@ -7,7 +7,7 @@ import requests
 
 
 # noinspection SpellCheckingInspection
-def send_serer_chan_msg(title: str, desc: str = ''):
+def send_server_chan_msg(title: str, desc: str = ''):
     key = getenv('SCKEY')
     url = f'https://sc.ftqq.com/{key}.send'
     print(url)

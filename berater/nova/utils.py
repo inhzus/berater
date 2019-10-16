@@ -6,7 +6,8 @@ from datetime import datetime
 from flask import current_app
 from pytz import timezone
 
-from berater.utils import current_identity, send_template_msg
+from berater.misc import send_template_msg
+from berater.utils import current_identity
 from berater.utils.wechat_sdk import TemplateFormat
 
 

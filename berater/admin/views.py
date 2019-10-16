@@ -7,8 +7,8 @@ from urllib.parse import quote
 from flask import Blueprint, current_app, request, url_for, redirect
 from werkzeug.exceptions import BadRequest, Conflict, NotFound, Unauthorized
 
-from berater.misc import Response, MemoryCache, PrivilegeTable, Transaction
-from berater.utils import Permission, get_roles_of_openid
+from berater.misc import Response, MemoryCache, PrivilegeTable, Transaction, get_roles_of_openid
+from berater.utils import Permission
 from berater.utils.wechat_sdk import Url, get_openid_from_code
 
 admin = Blueprint('admin', __name__)

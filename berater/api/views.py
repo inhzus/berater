@@ -11,9 +11,9 @@ from werkzeug.exceptions import BadRequest, Unauthorized, InternalServerError, N
 
 from berater.api.utils import get_openid_by_code, send_verify_code
 from berater.misc import (CandidateTable, StudentTable, SourceStudentTable, Transaction, AuthUserTable,
-                          Response, MemoryCache)
-from berater.utils import (token_required, current_identity, get_crypto_token, Permission,
-                           candidate_answer, tf_idf_client, get_roles_of_openid, gen_token)
+                          Response, MemoryCache, get_crypto_token, get_roles_of_openid)
+from berater.utils import (token_required, current_identity, Permission,
+                           candidate_answer, tf_idf_client, gen_token)
 
 api = Blueprint('api', __name__)
 

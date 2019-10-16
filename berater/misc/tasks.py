@@ -8,7 +8,7 @@ from celery import Celery
 from celery.exceptions import MaxRetriesExceededError
 from celery.schedules import crontab
 
-from berater.utils import send_serer_chan_msg
+from berater.utils import send_server_chan_msg
 from berater.utils.wechat_sdk import get_access_token_directly
 from .cache import MemoryCache
 
@@ -39,5 +39,5 @@ def refresh_access_token(self):
         try:
             return self.retry(countdown=5)
         except MaxRetriesExceededError as e:
-            send_serer_chan_msg('Celery服务', f'Celery task (refresh_access_token) triggered max retries at {asctime()}')
+            send_server_chan_msg('Celery服务', f'Celery task (refresh_access_token) triggered max retries at {asctime()}')
             raise e

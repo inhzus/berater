@@ -2,9 +2,10 @@
 # created by inhzus
 from typing import List
 
-from berater.misc import Transaction, PrivilegeTable, StudentTable, CandidateTable, MemoryCache
 from berater.utils import Permission, gen_token
 from berater.utils.wechat_sdk import Url, Communicate
+from .cache import MemoryCache
+from .models import Transaction, PrivilegeTable, StudentTable, CandidateTable
 
 token_cache = MemoryCache('access_token', 7200)
 

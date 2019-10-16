@@ -5,7 +5,7 @@ import logging
 import os
 import sys
 from json import JSONEncoder
-from logging.handlers import TimedRotatingFileHandler
+from logging.handlers import TimedRotatingFileHandler, RotatingFileHandler
 
 from flask import Flask
 
@@ -24,8 +24,8 @@ def create_app(config_name='dev'):
     config[config_name].init_app(app)
     config[0] = config[config_name]
 
-    if not os.path.exists('log'):
-        os.mkdir('log')
+    # if not os.path.exists('log'):
+    #     os.mkdir('log')
 
     class PackagePathFilter(logging.Filter):
         def filter(self, record):
