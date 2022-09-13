@@ -11,7 +11,7 @@ Click==7.0
 cryptography==3.3.2
 Flask==1.1.1
 Flask-SQLAlchemy==2.4.1
-flower==0.9.3
+flower==1.2.0
 gunicorn==19.9.0
 idna==2.8
 importlib-metadata==0.23
